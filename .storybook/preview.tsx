@@ -111,7 +111,19 @@ const preview: Preview = {
       },
     },
     a11y: {
-      test: 'todo',
+      // Mode bloquant : les violations d'accessibilité font échouer les tests vitest/CI.
+      // Les stories avec des problèmes techniques connus (canvas ECharts) portent
+      // leur propre surcharge `parameters.a11y.test = 'todo'` avec un commentaire FIXME.
+      test: 'error',
+      config: {
+        rules: [
+          // FIXME(a11y): La couleur primaire Géo2France (#95c11f) a un ratio de
+          // contraste ≈ 2.9:1, en-dessous du seuil WCAG AA (4.5:1 texte normal,
+          // 3:1 grand texte). C'est un choix de charte graphique délibéré.
+          // À traiter dans un ticket dédié : fix/a11y-geo2france-contrast.
+          { id: 'color-contrast', enabled: false },
+        ],
+      },
     },
   },
 };
