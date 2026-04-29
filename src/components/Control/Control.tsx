@@ -1,4 +1,5 @@
 import { Descriptions, DescriptionsProps, Form, Layout, theme } from "antd";
+import { Z_INDEX } from "../../utils/zIndex";
 import React, { createContext, CSSProperties, ReactElement, useCallback, useContext, useEffect, useState } from "react";
 
 const { Header } = Layout;
@@ -19,7 +20,7 @@ const Control: React.FC<IControlProps> = ({ children, style = {} }) => {
         padding: 12,
         position: "sticky",
         top: 0,
-        zIndex: 600, // maplibre top zIndex if 500
+        zIndex: Z_INDEX.CONTROL,
         backgroundColor: token.colorBgContainer,
         height: "auto",
         width: "100%",

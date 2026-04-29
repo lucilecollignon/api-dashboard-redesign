@@ -5,6 +5,7 @@ import Slider from "@ant-design/react-slick";
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
 import { Partner } from "../../types";
 import { AppContext } from "./DashboardApp";
+import { Z_INDEX } from "../../utils/zIndex";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -95,7 +96,7 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
         transition: "height 0.5s ease-in-out",
         overflow: "visible",
         borderTop: `1px solid ${token.colorBorder}`,
-        zIndex: 600, // maplibre top zIndex if 500
+        zIndex: Z_INDEX.FOOTER,
       }}
     >
      {showScrollIndicator &&   
@@ -113,7 +114,7 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
           justifyContent:"center",
           alignContent:"flex-end",
           background:
-            `linear-gradient(to bottom, transparent, rgba(0,0,0,0.1))`,
+            `linear-gradient(to bottom, transparent, ${token.colorFill})`,
         }}
       >
         <Icon icon="fa6-solid:chevron-down" fontSize={ 35 } color={ token.colorPrimary } />
@@ -173,7 +174,7 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
           position: "absolute",
           bottom: "5px",
           right: "10px",
-          zIndex: 1001,
+          zIndex: Z_INDEX.FOOTER_BUTTON,
         }}
         type="primary"
         onClick={toggleCollapse}

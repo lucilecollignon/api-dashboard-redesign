@@ -8,6 +8,7 @@ import { generateMenuItems } from "../../utils/route_utils";
 import { RouteConfig } from "../../types";
 import { AppContext } from "./DashboardApp";
 import { Icon } from "@iconify/react";
+import { Z_INDEX } from "../../utils/zIndex";
 const { Text } = Typography
 
 const style_img: CSSProperties = {
@@ -46,7 +47,7 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
     overflow: 'auto',
     height: "100vh",
     backgroundColor: token.colorBgContainer,
-    zIndex: 2, 
+    zIndex: Z_INDEX.SIDER,
     position: 'sticky',
     top:'0',
     borderRight: `1px solid ${token.colorBorderSecondary}`,
