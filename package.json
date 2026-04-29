@@ -41,6 +41,7 @@
     }
   },
   "scripts": {
+    "build": "tsc",
     "tsc": "tsc",
     "test": "jest --watchAll",
     "storybook": "storybook dev -p 6006",
