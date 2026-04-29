@@ -1,3 +1,6 @@
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
 import React, { useEffect } from 'react';
 import type { Preview, Decorator } from '@storybook/react-vite';
 import { ConfigProvider } from 'antd';

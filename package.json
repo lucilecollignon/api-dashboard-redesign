@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@ant-design/react-slick": "^1.1.2",
+    "@fontsource/inter": "^5.2.8",
     "@iconify/react": "^6.0.1",
     "@turf/bbox": "^7.2.0",
     "@turf/helpers": "^7.2.0",
