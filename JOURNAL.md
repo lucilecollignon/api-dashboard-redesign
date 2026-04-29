@@ -130,6 +130,83 @@ src/theme/
 
 ---
 
+## Phase 5 — Tests unitaires, snapshots, Chromatic CI, a11y
+**Branche :** `test/theme-system-coverage`  
+**Commit :** `72c2670`  
+**Date :** 29 avril 2026  
+**Fichiers créés/modifiés :** 10 (+280 lignes)
+
+### Tests unitaires `ThemeProvider` (31 tests)
+
+Couverture complète de `src/theme/__tests__/ThemeProvider.test.tsx` :
+
+- Résolution du preset par nom (`'geo2france'` → `geo2franceLightTheme`, `'neutral'` → `neutralLightTheme`)
+- Résolution du mode (`'auto'` → suit `prefers-color-scheme`, `'light'` / `'dark'` forcés)
+- Couche de rétrocompatibilité : passer un `ThemeConfig` brut déclenche `console.warn` + merge avec G2F
+- Persistance `localStorage` (clé `dashboard-theme-mode`)
+
+### Snapshots
+
+- `KeyFigure` en `geo2france-light` et `neutral-dark` (3 snapshots)
+- `FlipCard` en `geo2france-light` et `neutral-dark` (2 snapshots)
+
+### Chromatic CI
+
+Nouveau workflow `.github/workflows/chromatic.yml` :
+- Déclenché sur toutes les PR et pushs `main`
+- Upload Storybook → diff visuel automatique dans les reviews GitHub
+
+### a11y en mode `error` (CI bloquant)
+
+Modifications de `.storybook/preview.tsx` :
+- `a11y: { test: 'error' }` activé globalement — violations d'accessibilité bloquent la CI
+- **Exceptions documentées** :
+  - Règle `color-contrast` désactivée globalement : couleur primaire `#95c11f` de G2F échoue le rapport 4.5:1 (FIXME tracké : `fix/a11y-geo2france-contrast`)
+  - Stories ECharts exemptées en `'todo'` : canvas HTML non accessible par nature (FIXME tracké : `fix/a11y-echarts`)
+  - Stories `Statistics` exemptées en `'todo'` : indicateurs de tendance colorés à corriger
+
+### Polyfill Jest
+
+`jest.setup.js` : ajout de `TextEncoder` / `TextDecoder` pour compatibilité react-router-dom v7.
+
+---
+
+## Phase 6 — Documentation Storybook (Theming + Dark Mode)
+**Branche :** `docs/theming-guide`  
+**Commit :** `edb094d`  
+**Date :** 29 avril 2026  
+**Fichiers créés/modifiés :** 4 (+363 lignes, -3 lignes)
+
+### `stories-docs/Introduction.mdx` (mis à jour)
+
+Section "Personnalisation" entièrement rédigée :
+- Table des propriétés `theme` / `themeMode` dans `config.ts`
+- Description des presets et modes
+- Liens vers `Theming.mdx` et `DarkMode.mdx`
+
+### `stories-docs/Theming.mdx` (nouveau)
+
+- Présentation des presets `geo2france` et `neutral` (palettes, valeurs)
+- Tokens de base partagés (`borderRadius`, `fontFamily`, etc.)
+- Override partiel : couleurs, typographie, espacements/rayons via `ThemeConfig`
+- Intégration logo/branding custom
+- Table complète des tokens Ant Design consommés par la bibliothèque
+- Rappel règle critique antd v6 (pas de couleurs dans `baseTokens`)
+
+### `stories-docs/DarkMode.mdx` (nouveau)
+
+- Activation via `config.ts` ou `<ThemeProvider>` directement
+- Comportement détaillé du mode `auto` (détection OS + override `localStorage`)
+- Intégration du `<ThemeToggle>` dans la sidebar
+- Hooks : `useThemeContext`, `usePreferredColorScheme`
+- Bonnes pratiques : tokens vs hex hardcodés, images adaptatives (SVG/filtre CSS/variantes), graphiques ECharts, cartes MapLibre
+
+### Fix bonus
+
+Suppression de l'import `React` inutilisé dans `ThemeProvider.test.tsx` (erreur `TS6133` pré-existante).
+
+---
+
 ## État des phases
 
 | Phase | Statut | Commit | Branche |
@@ -138,9 +215,9 @@ src/theme/
 | 1+1b — Architecture thème + ThemeToggle | ✅ terminée | `b2f2576` | `feat/theme-system-foundation` |
 | 2 — Remplacement styles hardcodés | ✅ terminée | `3a78fde` | `fix/replace-hardcoded-styles` |
 | 3 — Toolbar Storybook dual-axe | ✅ terminée | `fd67857` | `feat/storybook-theme-switcher` |
-| 4 — Corrections UI/UX | 🔄 en cours | `d57cbd7` | `fix/uiux-zindex-visual-consistency` |
-| 5 — Tests (unit + snapshot + Chromatic + a11y) | ⏳ à faire | — | `test/theme-system-coverage` |
-| 6 — Documentation (Theming.mdx + DarkMode.mdx) | ⏳ à faire | — | `docs/theming-guide` |
+| 4 — Corrections UI/UX | ✅ terminée | `d57cbd7` | `fix/uiux-zindex-visual-consistency` |
+| 5 — Tests (unit + snapshot + Chromatic + a11y) | ✅ terminée | `72c2670` | `test/theme-system-coverage` |
+| 6 — Documentation (Theming.mdx + DarkMode.mdx) | ✅ terminée | `edb094d` | `docs/theming-guide` |
 | 7 — Release v2 + PR upstream | ⏳ à faire | — | `chore/release-v2` |
 
 ---
