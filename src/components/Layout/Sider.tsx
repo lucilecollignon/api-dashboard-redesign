@@ -9,6 +9,7 @@ import { RouteConfig } from "../../types";
 import { AppContext } from "./DashboardApp";
 import { Icon } from "@iconify/react";
 import { Z_INDEX } from "../../utils/zIndex";
+import { ThemeToggle } from "../../theme";
 const { Text } = Typography
 
 const style_img: CSSProperties = {
@@ -110,9 +111,25 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
           />
         </Col>
       </Row>
-      { (poweredBy && !collapsed) && <Text type="secondary" style={{position:"absolute", bottom:0, left:0, margin:4}}>
-            Propulsé et fait avec ❤️ par{" "}<Link to="https://github.com/geo2france/api-dashboard">Géo2France</Link>
-      </Text> }
+      <div style={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: "8px",
+        display: "flex",
+        flexDirection: collapsed ? "column" : "row",
+        alignItems: "center",
+        justifyContent: collapsed ? "center" : "space-between",
+        gap: 4,
+      }}>
+        <ThemeToggle />
+        { poweredBy && !collapsed && (
+          <Text type="secondary" style={{ fontSize: 11 }}>
+            Fait avec ❤️ par{" "}<Link to="https://github.com/geo2france/api-dashboard">Géo2France</Link>
+          </Text>
+        )}
+      </div>
     </Layout.Sider>
   );
 };
