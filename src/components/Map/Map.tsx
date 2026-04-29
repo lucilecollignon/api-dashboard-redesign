@@ -1,4 +1,3 @@
-// Composant carto
 import  Maplibre, { Layer, LayerProps, Source, SourceProps, useMap, Popup } from 'react-map-gl/maplibre';
 import type {MapRef, AnyLayer  } from 'react-map-gl/maplibre';
 import { useEffect, useRef, useState } from "react"
@@ -16,6 +15,7 @@ import { useBlockConfig } from '../DashboardPage/Block';
 import { SimpleRecord } from '../../types';
 import { parseNumber } from '../../utils/parsers';
 import { FeatureCollection } from 'geojson';
+import { theme } from 'antd';
 
 
 
@@ -162,6 +162,7 @@ interface MapLayerProps {
 export const MapLayer:React.FC<MapLayerProps> = ({dataset, categoryKey, color = 'red', type='circle', paint, xKey, yKey, geomKey:geomKey_input}) => {
     const {current: map} = useMap();
     const data = useDataset(dataset)
+    const { token } = theme.useToken();
     // src (lib proj4 pour convertir)
 
     const keys = data?.data?.[0] ? Object.keys(data?.data?.[0]) : undefined
@@ -222,7 +223,7 @@ export const MapLayer:React.FC<MapLayerProps> = ({dataset, categoryKey, color = 
             <Layer key={dataset} id={dataset} type="fill" paint={(paint ?? default_paint) as any}/>
         )
         layers.push(
-            <Layer key={dataset + '_line'}id={dataset + '_line'} type='line' paint={{"line-width":0.5,"line-color":'#fff'}}/>
+            <Layer key={dataset + '_line'}id={dataset + '_line'} type='line' paint={{"line-width":0.5,"line-color": token.colorBgContainer}}/>
         )
     } 
     /** LINESTRING */ 

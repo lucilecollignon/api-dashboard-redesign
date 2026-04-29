@@ -83,8 +83,8 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
     <Layout.Footer
       style={{
         textAlign: "center",
-        color: "#fff",
-        backgroundColor: "#fff",
+        color: token.colorText,
+        backgroundColor: token.colorBgContainer,
         bottom: "0",
         position: "sticky",
         right: "0",
@@ -94,7 +94,7 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
         minHeight: "40px",
         transition: "height 0.5s ease-in-out",
         overflow: "visible",
-        borderTop: "1px solid #ccc", 
+        borderTop: `1px solid ${token.colorBorder}`,
         zIndex: 600, // maplibre top zIndex if 500
       }}
     >
@@ -113,7 +113,7 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
           justifyContent:"center",
           alignContent:"flex-end",
           background:
-            "linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.1))",
+            `linear-gradient(to bottom, transparent, rgba(0,0,0,0.1))`,
         }}
       >
         <Icon icon="fa6-solid:chevron-down" fontSize={ 35 } color={ token.colorPrimary } />

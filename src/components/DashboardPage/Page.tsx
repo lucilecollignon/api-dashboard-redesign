@@ -208,7 +208,7 @@ export const DSL_DashboardPage:React.FC<IDSLDashboardPageProps> = ({name = 'Tabl
                         position: "sticky",
                         top: 0,
                         zIndex: 600, // maplibre top zIndex if 500
-                        backgroundColor: "#fff",
+                        backgroundColor: token.colorBgContainer,
                         height: "auto",
                         width: "100%",
                     }}>

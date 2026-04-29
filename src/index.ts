@@ -8,7 +8,7 @@ export { useMapControl } from "./utils/useMapControl";
 
 // Helpers
 export { BaseRecordToGeojsonPoint } from "./utils/baserecordtogeojsonpoint"
-export {cardStyles} from "./utils/cardStyles"
+export {cardStyles, useCardStyles} from "./utils/cardStyles"
 export { merge_others } from "./utils/merge_others"
 export { aggregator } from "./utils/aggregator"
 

@@ -1,4 +1,4 @@
-import { Descriptions, DescriptionsProps, Form, Layout } from "antd";
+import { Descriptions, DescriptionsProps, Form, Layout, theme } from "antd";
 import React, { createContext, CSSProperties, ReactElement, useCallback, useContext, useEffect, useState } from "react";
 
 const { Header } = Layout;
@@ -12,6 +12,7 @@ interface IControlProps {
  * Composant destiné à recevoir un Form avec les contrôles de la page
  */
 const Control: React.FC<IControlProps> = ({ children, style = {} }) => {
+  const { token } = theme.useToken();
   return (
     <Header
       style={{
@@ -19,10 +20,10 @@ const Control: React.FC<IControlProps> = ({ children, style = {} }) => {
         position: "sticky",
         top: 0,
         zIndex: 600, // maplibre top zIndex if 500
-        backgroundColor: "#fff",
+        backgroundColor: token.colorBgContainer,
         height: "auto",
         width: "100%",
-        borderBottom: "1px solid #ccc", 
+        borderBottom: `1px solid ${token.colorBorder}`,
         ...style,
       }}
     >

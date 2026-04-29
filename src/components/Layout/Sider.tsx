@@ -1,5 +1,5 @@
 
-import React, { CSSProperties, useContext, useState } from "react";
+import React, { CSSProperties, useContext, useEffect, useState } from "react";
 import { Layout, Menu, theme, Row, Col, Button, Divider, Typography } from "antd";
 
 import { Link, NavLink, useLocation } from "react-router-dom";
@@ -32,9 +32,11 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [collapsed, setCollapsed] = useState(isMobile ? true : false);
 
-  window.addEventListener("resize", () => {
-    setIsMobile(window.innerWidth < 768);
-  });
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -47,7 +49,7 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
     zIndex: 2, 
     position: 'sticky',
     top:'0',
-    borderRight: "1px solid #ccc", 
+    borderRight: `1px solid ${token.colorBorderSecondary}`,
     ...style
   };
 
