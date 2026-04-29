@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ConfigProvider, Layout, ThemeConfig } from "antd";
+import { Layout } from "antd";
+const { Content } = Layout;
+import type { ThemeConfig } from "antd";
 import { HashRouter, Outlet, Route, Routes } from "react-router-dom";
 import { Partner, RouteConfig } from "../../types";
-//import { generateRoutes } from "../../utils/route_utils";
 import DashboardSider from "./Sider";
-import { Content } from "antd/es/layout/layout";
 import { ErrorComponent } from "./Error";
 import { DasbhoardFooter } from "./Footer";
 import { Children, createContext, isValidElement, ReactElement, ReactNode } from "react";
@@ -15,27 +15,32 @@ import { ControlContext, CreateControlesRegistry } from "../Control/Control";
 import slug from 'slug'
 import { generateRoutes, getFirstValidElement } from "../../utils/route_utils";
 import renderIcon from "../../utils/icon";
-//import '../../index.css' //TODO a intégrer en jsx
+import { ThemeProvider } from "../../theme";
+import type { ThemeName, ThemeMode } from "../../theme";
 
 const queryClient = new QueryClient()
 
-export const default_theme:ThemeConfig = { 
+/**
+ * @deprecated Utiliser `theme="geo2france"` sur `<DashboardApp>` à la place.
+ * Alias vers `geo2franceLightTheme` conservé pour la rétrocompatibilité.
+ */
+export const default_theme: ThemeConfig = {
     token: {
       colorPrimary: "#95c11f",
-      linkHoverDecoration:'underline',
-      colorLink:'#0f4496',
-      colorLinkHover:'#0D2449',
-      borderRadius:4,
-      fontFamily:'Inter'
+      linkHoverDecoration: 'underline',
+      colorLink: '#0f4496',
+      colorLinkHover: '#0D2449',
+      borderRadius: 4,
+      fontFamily: 'Inter',
+    },
+    components: {
+      Timeline: {
+        itemPaddingBottom: 40,
       },
-    components:{
-      Timeline:{
-        itemPaddingBottom:40
+      Form: {
+        labelColor: 'rgba(0,0,0,0.7)',
       },
-      Form:{
-        labelColor:'rgba(0,0,0,0.7)'
-      }
-    }
+    },
   }
 
 
@@ -80,10 +85,18 @@ export interface DashboardConfig {
   routes?: RouteConfig[];
 
   /**
-   * Configuration du thème Ant Design (permet de personnaliser les couleurs, la typographie, etc.).
+   * Preset de thème (`'geo2france'` ou `'neutral'`), ou un `ThemeConfig` brut (déprécié).
    * Voir : https://ant.design/docs/react/customize-theme#theme
+   *
+   * @default 'geo2france'
   */
-  theme?: ThemeConfig;
+  theme?: ThemeName | ThemeConfig;
+
+  /**
+   * Mode d'affichage : `'auto'` (suit l'OS), `'light'` ou `'dark'`.
+   * @default 'auto'
+   */
+  themeMode?: ThemeMode;
 
   /**
    * URL ou chemin du logo à afficher dans le tableau de bord.
@@ -111,7 +124,7 @@ export interface DashboardConfig {
  * Les enfants de l'application sont les différentes pages de tableau de bord.
  * La configuration globale de l'application (nom, style, etc.) se fait via les propriétés.
  */
-const DashboardApp: React.FC<DashboardConfig> = ({children, theme, routes: routes_legacy, logo, brands, footerSlider, title, subtitle, disablePoweredBy=false}:DashboardConfig) => {
+const DashboardApp: React.FC<DashboardConfig> = ({children, theme, themeMode, routes: routes_legacy, logo, brands, footerSlider, title, subtitle, disablePoweredBy=false}:DashboardConfig) => {
 
     const context_values = { title, subtitle, logo };
 
@@ -152,7 +165,7 @@ const DashboardApp: React.FC<DashboardConfig> = ({children, theme, routes: route
     
     return (
         <QueryClientProvider client={queryClient}>
-          <ConfigProvider theme={theme || default_theme /* Merger plutôt ?*/}>
+          <ThemeProvider theme={theme} mode={themeMode}>
           <HelmetProvider>
           <AppContext.Provider value={ context_values }>
             <DatasetRegistryContext.Provider value={ createDatasetRegistry() } >
@@ -183,7 +196,7 @@ const DashboardApp: React.FC<DashboardConfig> = ({children, theme, routes: route
             </DatasetRegistryContext.Provider>
           </AppContext.Provider>
           </HelmetProvider>
-          </ConfigProvider>
+          </ThemeProvider>
         </QueryClientProvider>
     )
 }

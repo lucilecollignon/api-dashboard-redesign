@@ -53,6 +53,24 @@ import {dataProvider as FileProvider } from "./data_providers/file"
 export {WfsProvider, DatafairProvider, FileProvider}
 
 
+// Theme system
+export {
+  ThemeProvider,
+  ThemeToggle,
+  ThemeContext,
+  useThemeContext,
+  usePreferredColorScheme,
+  useThemeMode,
+  geo2franceLightTheme,
+  geo2franceDarkTheme,
+  neutralLightTheme,
+  neutralDarkTheme,
+  baseTokens,
+  geo2francePalette,
+  neutralPalette,
+} from './theme';
+export type { ThemeName, ThemeMode, ThemeContextValue, ThemeProviderProps } from './theme';
+
 // Types
 export type { SimpleRecord, Partner, RouteConfig } from "./types"
 export type { LegendItem } from "./components/MapLegend/MapLegend" 
