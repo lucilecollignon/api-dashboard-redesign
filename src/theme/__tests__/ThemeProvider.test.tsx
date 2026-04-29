@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import React from 'react';
 import { ThemeProvider } from '../ThemeProvider';
 import { useThemeContext } from '../context';
 import { geo2franceLightTheme } from '../themes/geo2france.light';

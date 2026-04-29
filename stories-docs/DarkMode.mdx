@@ -1,0 +1,168 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Documentation/Dark Mode" />
+
+# Dark Mode
+
+La bibliothèque supporte le mode sombre nativement. L'algorithme `darkAlgorithm` d'Ant Design est appliqué automatiquement selon le mode actif, sans aucun CSS global à ajouter.
+
+---
+
+## Activer le mode sombre
+
+### Via `config.ts`
+
+```ts
+// config.ts
+export const config: DashboardConfig = {
+  theme: "geo2france",
+
+  // 'auto'  → suit la préférence OS (prefers-color-scheme) — recommandé
+  // 'dark'  → forcé en sombre
+  // 'light' → forcé en clair
+  themeMode: "auto",
+};
+```
+
+### Via `<ThemeProvider>` directement
+
+```tsx
+import { ThemeProvider } from '@geo2france/api-dashboard';
+
+<ThemeProvider theme="geo2france" mode="dark">
+  {/* rendu toujours en mode sombre */}
+</ThemeProvider>
+```
+
+---
+
+## Comportement du mode `auto`
+
+En mode `auto` (valeur par défaut), la bibliothèque :
+
+1. Lit la préférence système via `window.matchMedia('(prefers-color-scheme: dark)')`.
+2. Réagit **en temps réel** aux changements (ex. : l'OS passe en dark automatiquement la nuit).
+3. Laisse l'utilisateur override manuellement via le `<ThemeToggle>` — le choix est alors **persisté en `localStorage`** (clé `dashboard-theme-mode`).
+
+Si l'utilisateur n'a jamais interagi avec le toggle, le mode `auto` est actif. Son choix explicite (`light` ou `dark`) prime sur la préférence OS jusqu'à ce qu'il repasse en `auto`.
+
+---
+
+## Intégrer le bouton `<ThemeToggle>`
+
+Le composant `ThemeToggle` cycle entre les trois états : **auto → light → dark → auto**. Il affiche l'icône correspondante et un tooltip.
+
+```tsx
+import { ThemeToggle } from '@geo2france/api-dashboard';
+
+// À placer dans la barre de navigation ou la sidebar,
+// à l'intérieur d'un <ThemeProvider>.
+<ThemeToggle />
+```
+
+### Exemple dans la sidebar
+
+```tsx
+// config.ts
+import { ThemeToggle } from '@geo2france/api-dashboard';
+
+export const config: DashboardConfig = {
+  theme: "geo2france",
+  themeMode: "auto",
+  siderBottom: <ThemeToggle />,  // affiché en bas du menu
+};
+```
+
+> Le `ThemeToggle` doit obligatoirement être rendu **à l'intérieur** d'un `<ThemeProvider>` (ce que `DashboardApp` garantit automatiquement).
+
+---
+
+## Accéder au mode actuel dans un composant
+
+Utilisez le hook `useThemeContext` pour lire ou modifier le mode depuis n'importe quel composant enfant :
+
+```tsx
+import { useThemeContext } from '@geo2france/api-dashboard';
+
+export function MyComponent() {
+  const { mode, resolvedMode, setMode } = useThemeContext();
+
+  return (
+    <div>
+      <p>Mode demandé : {mode}</p>           {/* 'auto' | 'light' | 'dark' */}
+      <p>Mode effectif : {resolvedMode}</p>  {/* 'light' | 'dark' (jamais 'auto') */}
+      <button onClick={() => setMode('dark')}>Forcer dark</button>
+    </div>
+  );
+}
+```
+
+### Avec `usePreferredColorScheme`
+
+Pour lire uniquement la préférence OS (sans l'override utilisateur) :
+
+```tsx
+import { usePreferredColorScheme } from '@geo2france/api-dashboard';
+
+const systemMode = usePreferredColorScheme(); // 'light' | 'dark'
+```
+
+---
+
+## Bonnes pratiques
+
+### Contrastes
+
+Tous les composants de la bibliothèque utilisent des **tokens sémantiques Ant Design** (`colorBgContainer`, `colorText`, `colorBorder`…) qui s'adaptent automatiquement entre les modes. Si vous ajoutez des styles personnalisés dans votre dashboard, préférez toujours les tokens aux couleurs hardcodées :
+
+```tsx
+import { theme } from 'antd';
+
+const { token } = theme.useToken();
+
+// ✅ S'adapte au mode clair et sombre
+const style = { background: token.colorBgContainer, color: token.colorText };
+
+// ❌ Cassé en dark mode
+const style = { background: '#ffffff', color: '#000000' };
+```
+
+### Images et illustrations
+
+Les images bitmap (`.png`, `.jpg`) ne s'adaptent pas automatiquement au mode sombre. Quelques stratégies :
+
+- **SVG avec `currentColor`** : hérite de `colorText` et s'adapte automatiquement.
+- **Filtre CSS** : pour les pictogrammes noirs sur fond transparent, appliquer `filter: invert(1)` en dark mode via `resolvedMode`.
+- **Deux versions** : fournir une variante `-dark` et la choisir selon `resolvedMode`.
+
+```tsx
+const { resolvedMode } = useThemeContext();
+
+<img
+  src={resolvedMode === 'dark' ? '/logo-dark.svg' : '/logo.svg'}
+  alt="Logo"
+/>
+```
+
+### Cartes (MapLibre)
+
+Les fonds de carte (URLs WMS Geo2France) ne s'adaptent pas au mode sombre — ils restent identiques quel que soit le mode. La légende (`MapLegend`) utilise `colorBgElevated` et est correctement adaptée.
+
+### Graphiques ECharts
+
+Les labels et axes des graphiques ECharts consomment `colorTextBase` et `colorText` via `theme.useToken()`. En mode sombre, ils passent automatiquement en clair. Vérifiez le **contraste** si vous utilisez des couleurs de série personnalisées (les couleurs de données ne sont pas gérées par le système de thème).
+
+---
+
+## Référence des valeurs
+
+| Propriété `mode` | Comportement |
+|-----------------|--------------|
+| `'auto'` | Suit `prefers-color-scheme`, réagit aux changements OS |
+| `'light'` | Mode clair forcé, ignore la préférence OS |
+| `'dark'` | Mode sombre forcé, ignore la préférence OS |
+
+| Valeur `localStorage` (`dashboard-theme-mode`) | Priorité |
+|------------------------------------------------|----------|
+| Absent ou `'auto'` | Préférence OS active |
+| `'light'` ou `'dark'` | Override utilisateur (prime sur OS) |

@@ -39,6 +39,32 @@ Le fichier `config.ts` peut-être édité pour personnaliser l'application : th�
 
 ### Personnalisation
 
-Theme, titre, footer, etc.
+Le fichier `config.ts` expose plusieurs propriétés pour adapter l'apparence du tableau de bord :
 
-*Rédaction en cours*
+```ts
+// config.ts
+export const config: DashboardConfig = {
+  title: "Mon tableau de bord",
+
+  // Preset de thème : 'geo2france' (défaut) ou 'neutral'
+  theme: "geo2france",
+
+  // Mode d'affichage : 'auto' (suit l'OS), 'light' ou 'dark'
+  themeMode: "auto",
+
+  // … autres options (routes, footer, etc.)
+};
+```
+
+| Propriété | Type | Défaut | Description |
+|-----------|------|--------|-------------|
+| `theme` | `'geo2france' \| 'neutral'` | `'geo2france'` | Preset de couleurs |
+| `themeMode` | `'auto' \| 'light' \| 'dark'` | `'auto'` | Mode clair / sombre |
+
+- **`'geo2france'`** — palette verte et bleue officielle Geo2France (`#95c11f`, `#0f4496`).
+- **`'neutral'`** — palette bleue Ant Design générique, adaptée aux dashboards sans branding spécifique.
+- **`'auto'`** — détecte automatiquement la préférence système (`prefers-color-scheme`).
+
+Pour en savoir plus sur les possibilités de personnalisation avancée (override partiel, logo, typographie), consultez la page **[Theming](?path=/docs/documentation-theming--docs)**.
+
+Pour tout ce qui concerne le mode sombre (intégration du bouton toggle, bonnes pratiques), consultez la page **[Dark Mode](?path=/docs/documentation-dark-mode--docs)**.
