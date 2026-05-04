@@ -10,7 +10,7 @@ import { AppContext } from "./DashboardApp";
 import { Icon } from "@iconify/react";
 import { Z_INDEX } from "../../utils/zIndex";
 import { ThemeToggle } from "../../theme";
-import { useBrandLogo } from "../../theme/hooks/useBrandLogo";
+import { useVisualIdentityLogo } from "../../theme/hooks/useVisualIdentityLogo";
 const { Text } = Typography
 
 const style_img: CSSProperties = {
@@ -29,9 +29,9 @@ interface DbSiderProps {
 
 const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, poweredBy=true}) => {
   const {logo: appLogo, title} = useContext(AppContext)
-  const brandLogo = useBrandLogo();
-  const effectiveLogo = logo ?? brandLogo?.src ?? appLogo;
-  const effectiveAlt = brandLogo?.alt ?? title;
+  const visualIdentityLogo = useVisualIdentityLogo();
+  const effectiveLogo = logo ?? visualIdentityLogo?.src ?? appLogo;
+  const effectiveAlt = visualIdentityLogo?.alt ?? title;
 
   const { token } = theme.useToken();
   const { pathname:selectedKey } = useLocation();

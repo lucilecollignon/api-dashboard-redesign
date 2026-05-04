@@ -10,9 +10,14 @@ import { geo2franceDarkTheme } from './themes/geo2france.dark';
 import { neutralLightTheme } from './themes/neutral.light';
 import { neutralDarkTheme } from './themes/neutral.dark';
 import { deepMerge } from './utils/deepMerge';
-import { createBrandTheme } from './brand/createBrandTheme';
-import { isBundle } from './brand/normalize';
-import type { BrandThemeBundle, BrandTokens, BrandShorthand, BrandLogo } from './brand/types';
+import { createVisualIdentity } from './visual-identity/createVisualIdentity';
+import { isBundle } from './visual-identity/normalize';
+import type {
+  VisualIdentityThemeBundle,
+  VisualIdentityTokens,
+  VisualIdentityShorthand,
+  VisualIdentityLogo,
+} from './visual-identity/types';
 
 const PRESETS: Record<ThemeName, Record<'light' | 'dark', ThemeConfig>> = {
   geo2france: {
@@ -43,14 +48,14 @@ export interface ThemeProviderProps {
   theme?: ThemeName | ThemeConfig;
 
   /**
-   * Branding personnalisé. Trois formes acceptées :
-   * - `BrandThemeBundle` (généré par `createBrandTheme()`) — recommandé en prod
-   * - `BrandTokens` (objet brut avec `light`) — auto-wrappé par le provider
-   * - `BrandShorthand` (`{ name, primary }`) — démarrage rapide
+   * Identité visuelle personnalisée. Trois formes acceptées :
+   * - `VisualIdentityThemeBundle` (généré par `createVisualIdentity()`) — recommandé en prod
+   * - `VisualIdentityTokens` (objet brut avec `light`) — auto-wrappé par le provider
+   * - `VisualIdentityShorthand` (`{ name, primary }`) — démarrage rapide
    *
-   * Mutuellement exclusif avec `theme` (priorité à `brand` si les deux sont fournis).
+   * Mutuellement exclusif avec `theme` (priorité à `visualIdentity` si les deux sont fournis).
    */
-  brand?: BrandThemeBundle | BrandTokens | BrandShorthand;
+  visualIdentity?: VisualIdentityThemeBundle | VisualIdentityTokens | VisualIdentityShorthand;
 
   /**
    * Mode d'affichage.
@@ -69,13 +74,13 @@ export interface ThemeProviderProps {
  * Wrape `ConfigProvider` d'Ant Design avec :
  * - sélection du preset (geo2france / neutral)
  * - résolution du mode (auto / light / dark)
- * - support du branding personnalisé via `brand`
+ * - support de l'identité visuelle personnalisée via `visualIdentity`
  * - couche de rétrocompatibilité pour les anciens `ThemeConfig` directs
  * - exposition du contexte `ThemeContext` aux composants enfants
  */
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   theme = 'geo2france',
-  brand,
+  visualIdentity,
   mode: modeProp = 'auto',
   children,
 }) => {
@@ -86,36 +91,36 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   const modeKey: 'light' | 'dark' = effectiveResolvedMode === 'dark' ? 'dark' : 'light';
 
-  // Mémoïse le bundle brand pour éviter les re-créations inutiles
-  const brandBundle = useMemo<BrandThemeBundle | undefined>(() => {
-    if (!brand) return undefined;
-    if (isBundle(brand)) return brand;
-    return createBrandTheme(brand as BrandTokens | BrandShorthand);
-  }, [brand]);
+  // Mémoïse le bundle visualIdentity pour éviter les re-créations inutiles
+  const visualIdentityBundle = useMemo<VisualIdentityThemeBundle | undefined>(() => {
+    if (!visualIdentity) return undefined;
+    if (isBundle(visualIdentity)) return visualIdentity;
+    return createVisualIdentity(visualIdentity as VisualIdentityTokens | VisualIdentityShorthand);
+  }, [visualIdentity]);
 
   let resolvedThemeName: ThemeName = 'geo2france';
   let antdTheme: ThemeConfig;
-  let logo: BrandLogo | undefined;
+  let logo: VisualIdentityLogo | undefined;
 
-  if (brand && brandBundle) {
-    // Brand a priorité sur theme
+  if (visualIdentity && visualIdentityBundle) {
+    // visualIdentity a priorité sur theme
     if (theme && isThemeConfig(theme)) {
       console.error(
-        '[api-dashboard] Les props `brand` et `theme` (ThemeConfig) sont mutuellement exclusives. ' +
-          '`brand` est utilisé en priorité. Retirez la prop `theme`.',
+        '[api-dashboard] Les props `visualIdentity` et `theme` (ThemeConfig) sont mutuellement exclusives. ' +
+          '`visualIdentity` est utilisé en priorité. Retirez la prop `theme`.',
       );
     }
     resolvedThemeName = 'neutral';
-    antdTheme = brandBundle[modeKey];
-    logo = brandBundle.logo;
+    antdTheme = visualIdentityBundle[modeKey];
+    logo = visualIdentityBundle.logo;
   } else if (typeof theme === 'string' && (theme === 'geo2france' || theme === 'neutral')) {
     resolvedThemeName = theme;
     antdTheme = PRESETS[resolvedThemeName][modeKey];
   } else if (isThemeConfig(theme)) {
     console.warn(
       '[api-dashboard] Passer un ThemeConfig directement à <ThemeProvider theme={...}> est déprécié et sera retiré en v4. ' +
-        'Migration : utilisez `brand={{ name: "myBrand", primary: "#xxx" }}` pour le cas simple, ' +
-        'ou `createBrandTheme({ name, light: {...} })` pour un contrôle complet. ' +
+        'Migration : utilisez `visualIdentity={{ name: "myVisualIdentity", primary: "#xxx" }}` pour le cas simple, ' +
+        'ou `createVisualIdentity({ name, light: {...} })` pour un contrôle complet. ' +
         'En attendant, votre configuration est mergée avec le thème geo2france.',
     );
     antdTheme = deepMerge(

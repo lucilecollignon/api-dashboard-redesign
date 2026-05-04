@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ThemeProvider } from '../ThemeProvider';
-import { useBrandLogo } from '../hooks/useBrandLogo';
-import type { BrandTokens } from '../brand/types';
+import { useVisualIdentityLogo } from '../hooks/useVisualIdentityLogo';
+import type { VisualIdentityTokens } from '../visual-identity/types';
 
 const makeMockMatchMedia = (prefersDark = false) =>
   jest.fn().mockImplementation((query: string) => ({
@@ -29,7 +29,7 @@ beforeEach(() => {
 });
 
 const LogoConsumer = () => {
-  const logo = useBrandLogo();
+  const logo = useVisualIdentityLogo();
   return (
     <div>
       <span data-testid="src">{logo?.src ?? 'none'}</span>
@@ -38,8 +38,8 @@ const LogoConsumer = () => {
   );
 };
 
-describe('useBrandLogo', () => {
-  test('retourne undefined quand pas de brand', () => {
+describe('useVisualIdentityLogo', () => {
+  test('retourne undefined quand pas de visualIdentity', () => {
     render(
       <ThemeProvider>
         <LogoConsumer />
@@ -50,13 +50,13 @@ describe('useBrandLogo', () => {
 
   test('retourne le logo en mode light', () => {
     window.matchMedia = makeMockMatchMedia(false);
-    const brand: BrandTokens = {
+    const visualIdentity: VisualIdentityTokens = {
       name: 'light-logo',
       light: { colorPrimary: '#000' },
       logo: { src: '/logo-light.svg', alt: 'Light', srcDark: '/logo-dark.svg' },
     };
     render(
-      <ThemeProvider brand={brand} mode="light">
+      <ThemeProvider visualIdentity={visualIdentity} mode="light">
         <LogoConsumer />
       </ThemeProvider>,
     );
@@ -65,13 +65,13 @@ describe('useBrandLogo', () => {
 
   test('retourne srcDark en mode dark quand disponible', () => {
     window.matchMedia = makeMockMatchMedia(true);
-    const brand: BrandTokens = {
+    const visualIdentity: VisualIdentityTokens = {
       name: 'dark-logo',
       light: { colorPrimary: '#000' },
       logo: { src: '/logo.svg', alt: 'Dark', srcDark: '/logo-dark.svg' },
     };
     render(
-      <ThemeProvider brand={brand} mode="dark">
+      <ThemeProvider visualIdentity={visualIdentity} mode="dark">
         <LogoConsumer />
       </ThemeProvider>,
     );
@@ -80,13 +80,13 @@ describe('useBrandLogo', () => {
 
   test('fallback sur src si srcDark absent en mode dark', () => {
     window.matchMedia = makeMockMatchMedia(true);
-    const brand: BrandTokens = {
+    const visualIdentity: VisualIdentityTokens = {
       name: 'no-dark-logo',
       light: { colorPrimary: '#000' },
       logo: { src: '/logo.svg', alt: 'Fallback' },
     };
     render(
-      <ThemeProvider brand={brand} mode="dark">
+      <ThemeProvider visualIdentity={visualIdentity} mode="dark">
         <LogoConsumer />
       </ThemeProvider>,
     );

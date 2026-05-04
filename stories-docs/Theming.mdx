@@ -4,11 +4,19 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Theming
 
-La bibliothèque expose un système de thème à deux axes : le **preset de couleurs** (`geo2france` ou `neutral`) et le **mode d'affichage** (`light`, `dark`, ou `auto`). Les deux sont indépendants et combinables librement.
+Le theming repose sur deux réglages simples :
+
+- `theme` choisit la palette de couleurs (`geo2france` ou `neutral`).
+- `themeMode` choisit la luminosité (`light`, `dark` ou `auto`) dans `config.ts`.
+- `mode` choisit la luminosité uniquement si vous utilisez `<ThemeProvider>` directement.
+
+Ces deux réglages sont combinables librement.
+
+Si vous avez besoin d'une identité visuelle complète (couleurs, logo, typographie), utilisez `visualIdentity` (voir la page **[Identité Visuelle](?path=/docs/documentation-identite-visuelle--docs)**). Quand `visualIdentity` est fourni, il est prioritaire sur `theme`.
 
 ---
 
-## Presets disponibles
+## Palettes disponibles
 
 ### `geo2france` (défaut)
 
@@ -70,14 +78,14 @@ Utile pour des tableaux de bord génériques ou pour des clients qui apportent l
 
 ---
 
-## Configurer le preset
+## Configurer le thème
 
 ### Via `config.ts` (recommandé)
 
 ```ts
 // config.ts
 export const config: DashboardConfig = {
-  theme: "geo2france",  // ou "neutral"
+  theme: "geo2france", // ou "neutral"
   themeMode: "auto",
 };
 ```
@@ -100,7 +108,7 @@ export default function App() {
 
 ---
 
-## Tokens de base partagés
+## Réglages de base communs
 
 Ces tokens s'appliquent à tous les presets et modes :
 
@@ -138,142 +146,22 @@ Ces tokens s'appliquent à tous les presets et modes :
 
 ---
 
-## Override partiel
-
-### Couleurs personnalisées
-
-Pour surcharger uniquement les couleurs sans remplacer tout le preset, passez un objet `ThemeConfig` (usage déprécié, mais toujours supporté avec avertissement console) :
-
-```tsx
-import { ThemeProvider } from '@geo2france/api-dashboard';
-import type { ThemeConfig } from 'antd';
-
-const myTheme: ThemeConfig = {
-  token: {
-    colorPrimary: '#e63946',  // rouge personnalisé
-  },
-};
-
-// ⚠️ Déprécié — affiche un warning console.
-// La config est mergée avec geo2france par défaut.
-<ThemeProvider theme={myTheme}>
-  ...
-</ThemeProvider>
-```
-
-> **Recommandation** : si vous avez besoin d'un preset sur mesure, contribuez une palette dans `src/theme/tokens/palettes/` plutôt que de passer un `ThemeConfig` brut.
-
-### Typographie
-
-La police peut être changée via le token `fontFamily` :
-
-```tsx
-const myTheme: ThemeConfig = {
-  token: {
-    fontFamily: 'Marianne, Arial, sans-serif',
-  },
-};
-```
-
-### Espacements et rayons
-
-```tsx
-const myTheme: ThemeConfig = {
-  token: {
-    borderRadius: 8,      // coins plus arrondis
-    borderRadiusLG: 12,
-  },
-};
-```
-
----
-
-## Charger et appeler sa police custom (sans Google Fonts)
-
-Pour utiliser votre propre police sans dépendre de Google Fonts, suivez ces trois étapes.
-
-### 1) Charger les fichiers de police
-
-Placez vos fichiers de police au format `.woff2` dans le dossier `public/font/` de votre projet :
-
-```
-public/
-  font/
-    MaPolice-Regular.woff2
-    MaPolice-Bold.woff2
-```
-
-Le format `woff2` est recommandé : il est compressé, rapide et supporté par tous les navigateurs modernes.
-
-### 2) Déclarer la police dans le CSS global
-
-Dans votre fichier CSS principal (par exemple `src/index.css`), déclarez la police avec `@font-face`.
-Si votre projet contenait un `@import url('https://fonts.googleapis.com/...')`, supprimez-le.
-
-```css
-@font-face {
-  font-family: 'MaPolice';
-  src: url('/font/MaPolice-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'MaPolice';
-  src: url('/font/MaPolice-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-```
-
-`font-display: swap` permet d'afficher le texte immédiatement avec une police système, puis de basculer vers votre police dès qu'elle est chargée.
-
-### 3) Appeler la police dans le brand
-
-Dans votre `App.tsx`, passez le nom de la police dans `typography.fontFamily` via `createBrandTheme(...)`.
-
-Le thème de base utilise `Inter, system-ui, sans-serif` comme police par défaut. Conservez cette stack en fallback pour que l'interface reste lisible si votre police ne se charge pas :
-
-```tsx
-import { createBrandTheme } from '@geo2france/api-dashboard';
-
-const monBrand = createBrandTheme({
-  name: 'mon-projet',
-  light: {
-    colorPrimary: '#FF6B35',
-  },
-  typography: { fontFamily: "'MaPolice', Inter, system-ui, sans-serif" },
-});
-```
-
-Passez ensuite ce brand à `<DashboardApp>` :
-
-```tsx
-<DashboardApp brand={monBrand} themeMode="auto" />
-```
-
-La police sera appliquée à l'ensemble des composants du tableau de bord (titres, texte courant, boutons, labels de graphiques).
-
----
-
-## Logo et branding custom
+## Logo et identité visuelle personnalisée
 
 Le logo du tableau de bord est configuré dans `config.ts` via la propriété `logo` (voir la doc `DashboardApp`). Il est indépendant du preset de thème.
 
 ```ts
 export const config: DashboardConfig = {
   theme: "neutral",
-  logo: <img src="/mon-logo.svg" alt="Mon organisation" height={32} />,
+  logo: "/mon-logo.svg",
 };
 ```
 
 ---
 
-## Tokens Ant Design utilisés dans la bibliothèque
+## Principaux tokens Ant Design utilisés
 
-La bibliothèque consomme les tokens sémantiques suivants. Si vous overridez ces tokens dans votre thème, l'effet sera répercuté sur tous les composants qui les utilisent.
+La bibliothèque consomme les tokens sémantiques suivants. Si vous surchargez ces tokens dans votre thème, l'effet sera répercuté sur tous les composants qui les utilisent.
 
 <table>
   <thead>
@@ -319,13 +207,33 @@ La bibliothèque consomme les tokens sémantiques suivants. Si vous overridez ce
       <td><code>Form.labelColor</code></td>
       <td>Labels de formulaire (adapté automatiquement en dark)</td>
     </tr>
+    <tr>
+      <td><code>colorTextSecondary</code></td>
+      <td>Axes et labels secondaires des graphiques ECharts</td>
+    </tr>
+    <tr>
+      <td><code>colorFill</code></td>
+      <td>Dégradé du footer</td>
+    </tr>
+    <tr>
+      <td><code>colorIcon</code></td>
+      <td>Icônes d'état vide</td>
+    </tr>
+    <tr>
+      <td><code>colorTextLabel</code></td>
+      <td>Labels de contrôle dans les sélecteurs</td>
+    </tr>
+    <tr>
+      <td><code>colorFillSecondary</code></td>
+      <td>Arrière-plan secondaire du Sider (utilisation prévue)</td>
+    </tr>
   </tbody>
 </table>
 
 ---
 
-## Règle critique Ant Design v6
+## Note pour les contributeurs
 
-> **Ne jamais mettre de couleurs dans `baseTokens`.**
+> **Règle critique Ant Design v6 : ne mettez jamais de couleurs dans `baseTokens`.**
 >
 > Le `darkAlgorithm` d'Ant Design ne peut pas écraser les tokens couleur définis dans la configuration de base ([issue #53719](https://github.com/ant-design/ant-design/issues/53719)). Toutes les couleurs sont donc définies exclusivement dans les palettes (`tokens/palettes/`) et les thèmes complets (`themes/`).

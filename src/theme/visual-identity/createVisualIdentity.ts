@@ -1,13 +1,18 @@
 import { theme as antTheme } from 'antd';
 import type { ThemeConfig } from 'antd';
-import type { BrandTokens, BrandShorthand, BrandThemeBundle, BrandColors } from './types';
+import type {
+  VisualIdentityTokens,
+  VisualIdentityShorthand,
+  VisualIdentityThemeBundle,
+  VisualIdentityColors,
+} from './types';
 import { normalizeTokens, normalizeLogo } from './normalize';
-import { validateBrandTokens } from './validate';
+import { validateVisualIdentityTokens } from './validate';
 import { neutralLightTheme } from '../themes/neutral.light';
 import { neutralDarkTheme } from '../themes/neutral.dark';
 import { deepMerge } from '../utils/deepMerge';
 
-function colorsToToken(colors: BrandColors): Record<string, unknown> {
+function colorsToToken(colors: VisualIdentityColors): Record<string, unknown> {
   const token: Record<string, unknown> = {};
   if (colors.colorPrimary) token.colorPrimary = colors.colorPrimary;
   if (colors.colorLink) token.colorLink = colors.colorLink;
@@ -22,14 +27,16 @@ function colorsToToken(colors: BrandColors): Record<string, unknown> {
 }
 
 /**
- * Crée un bundle de thème à partir de tokens de marque.
- * Accepte `BrandTokens` (forme normale) ou `BrandShorthand` (forme courte).
+ * Crée un bundle de thème à partir de tokens d'identité visuelle.
+ * Accepte `VisualIdentityTokens` (forme normale) ou `VisualIdentityShorthand` (forme courte).
  *
- * Le bundle résultant est prêt à être passé à `<ThemeProvider brand={...} />`.
+ * Le bundle résultant est prêt à être passé à `<ThemeProvider visualIdentity={...} />`.
  */
-export function createBrandTheme(input: BrandTokens | BrandShorthand): BrandThemeBundle {
+export function createVisualIdentity(
+  input: VisualIdentityTokens | VisualIdentityShorthand,
+): VisualIdentityThemeBundle {
   const tokens = normalizeTokens(input);
-  validateBrandTokens(tokens);
+  validateVisualIdentityTokens(tokens);
 
   const logo = normalizeLogo(tokens.logo, tokens.name);
   const darkColors = tokens.dark ?? tokens.light;
@@ -64,7 +71,7 @@ export function createBrandTheme(input: BrandTokens | BrandShorthand): BrandThem
   ) as ThemeConfig;
 
   return {
-    __brand: true,
+    __visualIdentity: true,
     name: tokens.name,
     light: lightTheme,
     dark: darkTheme,

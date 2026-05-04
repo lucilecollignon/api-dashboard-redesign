@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ThemeProvider } from '../ThemeProvider';
 import { useThemeContext } from '../context';
-import { createBrandTheme } from '../brand/createBrandTheme';
-import type { BrandShorthand, BrandTokens } from '../brand/types';
+import { createVisualIdentity } from '../visual-identity/createVisualIdentity';
+import type { VisualIdentityShorthand, VisualIdentityTokens } from '../visual-identity/types';
 
 const makeMockMatchMedia = (prefersDark = false) =>
   jest.fn().mockImplementation((query: string) => ({
@@ -41,40 +41,40 @@ const ThemeConsumer = () => {
   );
 };
 
-describe('ThemeProvider — prop brand', () => {
-  test('brand shorthand rend le composant sans crash', () => {
-    const brand: BrandShorthand = { name: 'test', primary: '#FF0000' };
+describe('ThemeProvider - prop visualIdentity', () => {
+  test('visualIdentity shorthand rend le composant sans crash', () => {
+    const visualIdentity: VisualIdentityShorthand = { name: 'test', primary: '#FF0000' };
     render(
-      <ThemeProvider brand={brand}>
+      <ThemeProvider visualIdentity={visualIdentity}>
         <ThemeConsumer />
       </ThemeProvider>,
     );
     expect(screen.getByTestId('themeName')).toHaveTextContent('neutral');
   });
 
-  test('brand tokens (light seul) fonctionne', () => {
-    const brand: BrandTokens = {
-      name: 'myBrand',
+  test('visualIdentity tokens (light seul) fonctionne', () => {
+    const visualIdentity: VisualIdentityTokens = {
+      name: 'myVisualIdentity',
       light: { colorPrimary: '#00FF00' },
-      logo: { src: '/logo.svg', alt: 'My Brand' },
+      logo: { src: '/logo.svg', alt: 'My Visual Identity' },
     };
     render(
-      <ThemeProvider brand={brand}>
+      <ThemeProvider visualIdentity={visualIdentity}>
         <ThemeConsumer />
       </ThemeProvider>,
     );
     expect(screen.getByTestId('logoSrc')).toHaveTextContent('/logo.svg');
-    expect(screen.getByTestId('logoAlt')).toHaveTextContent('My Brand');
+    expect(screen.getByTestId('logoAlt')).toHaveTextContent('My Visual Identity');
   });
 
-  test('brand bundle (pré-créé) est utilisé directement', () => {
-    const bundle = createBrandTheme({
+  test('visualIdentity bundle (pré-créé) est utilisé directement', () => {
+    const bundle = createVisualIdentity({
       name: 'pre-built',
       light: { colorPrimary: '#0000FF' },
       logo: { src: '/pre.svg', alt: 'Pre' },
     });
     render(
-      <ThemeProvider brand={bundle}>
+      <ThemeProvider visualIdentity={bundle}>
         <ThemeConsumer />
       </ThemeProvider>,
     );
@@ -82,13 +82,13 @@ describe('ThemeProvider — prop brand', () => {
     expect(screen.getByTestId('themeName')).toHaveTextContent('neutral');
   });
 
-  test('brand + theme (ThemeConfig brut) → console.error + brand utilisé', () => {
+  test('visualIdentity + theme (ThemeConfig brut) -> console.error + visualIdentity utilisé', () => {
     const error = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const brand: BrandShorthand = { name: 'priority', primary: '#111' };
+    const visualIdentity: VisualIdentityShorthand = { name: 'priority', primary: '#111' };
     const legacyTheme = { token: { colorPrimary: '#222' } };
 
     render(
-      <ThemeProvider brand={brand} theme={legacyTheme}>
+      <ThemeProvider visualIdentity={visualIdentity} theme={legacyTheme}>
         <ThemeConsumer />
       </ThemeProvider>,
     );
@@ -98,18 +98,18 @@ describe('ThemeProvider — prop brand', () => {
     error.mockRestore();
   });
 
-  test('mode dark avec brand affiche resolvedMode dark', () => {
+  test('mode dark avec visualIdentity affiche resolvedMode dark', () => {
     window.matchMedia = makeMockMatchMedia(true);
-    const brand: BrandShorthand = { name: 'dark-test', primary: '#333' };
+    const visualIdentity: VisualIdentityShorthand = { name: 'dark-test', primary: '#333' };
     render(
-      <ThemeProvider brand={brand} mode="auto">
+      <ThemeProvider visualIdentity={visualIdentity} mode="auto">
         <ThemeConsumer />
       </ThemeProvider>,
     );
     expect(screen.getByTestId('resolvedMode')).toHaveTextContent('dark');
   });
 
-  test('sans brand ni theme → fallback geo2france', () => {
+  test('sans visualIdentity ni theme -> fallback geo2france', () => {
     render(
       <ThemeProvider>
         <ThemeConsumer />

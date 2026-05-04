@@ -68,20 +68,20 @@ export {
   baseTokens,
   geo2francePalette,
   neutralPalette,
-  createBrandTheme,
-  useBrandLogo,
+  createVisualIdentity,
+  useVisualIdentityLogo,
 } from './theme';
 export type {
   ThemeName,
   ThemeMode,
   ThemeContextValue,
   ThemeProviderProps,
-  BrandColors,
-  BrandTypography,
-  BrandLogo,
-  BrandTokens,
-  BrandShorthand,
-  BrandThemeBundle,
+  VisualIdentityColors,
+  VisualIdentityTypography,
+  VisualIdentityLogo,
+  VisualIdentityTokens,
+  VisualIdentityShorthand,
+  VisualIdentityThemeBundle,
 } from './theme';
 
 // Types

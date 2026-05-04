@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { BrandLogo } from './brand/types';
+import type { VisualIdentityLogo } from './visual-identity/types';
 
 export type ThemeName = 'neutral' | 'geo2france';
 export type ThemeMode = 'light' | 'dark' | 'auto';
@@ -13,8 +13,8 @@ export interface ThemeContextValue {
   resolvedMode: 'light' | 'dark';
   /** Changer le mode (persiste en localStorage) */
   setMode: (mode: ThemeMode) => void;
-  /** Logo de la marque (fourni via `brand`) */
-  logo?: BrandLogo;
+  /** Logo de l'identité visuelle (fourni via `visualIdentity`) */
+  logo?: VisualIdentityLogo;
 }
 
 export const ThemeContext = createContext<ThemeContextValue>({
