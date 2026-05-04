@@ -1,5 +1,5 @@
 import { createBrandTheme } from '../brand/createBrandTheme';
-import type { BrandTokens, BrandShorthand, BrandThemeBundle } from '../brand/types';
+import type { BrandTokens, BrandShorthand } from '../brand/types';
 
 describe('createBrandTheme', () => {
   describe('forme courte (BrandShorthand)', () => {
