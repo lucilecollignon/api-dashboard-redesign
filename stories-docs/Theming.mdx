@@ -14,11 +14,28 @@ La bibliothèque expose un système de thème à deux axes : le **preset de coul
 
 Palette officielle du projet Geo2France.
 
-| Token | Valeur |
-|-------|--------|
-| `colorPrimary` | `#95c11f` (vert) |
-| `colorLink` | `#0f4496` (bleu marine) |
-| `colorLinkHover` | `#0D2449` (bleu foncé) |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Valeur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>colorPrimary</code></td>
+      <td><code>#95c11f</code> (vert)</td>
+    </tr>
+    <tr>
+      <td><code>colorLink</code></td>
+      <td><code>#0f4496</code> (bleu marine)</td>
+    </tr>
+    <tr>
+      <td><code>colorLinkHover</code></td>
+      <td><code>#0D2449</code> (bleu foncé)</td>
+    </tr>
+  </tbody>
+</table>
 
 Ce preset est rétrocompatible avec les dashboards existants (Odema, Clicnat, etc.). Il est utilisé par défaut si aucun `theme` n'est spécifié.
 
@@ -26,11 +43,28 @@ Ce preset est rétrocompatible avec les dashboards existants (Odema, Clicnat, et
 
 Palette bleue générique Ant Design, sans branding Geo2France.
 
-| Token | Valeur |
-|-------|--------|
-| `colorPrimary` | `#1677ff` (bleu Ant Design) |
-| `colorLink` | `#1677ff` |
-| `colorLinkHover` | `#0958d9` |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Valeur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>colorPrimary</code></td>
+      <td><code>#1677ff</code> (bleu Ant Design)</td>
+    </tr>
+    <tr>
+      <td><code>colorLink</code></td>
+      <td><code>#1677ff</code></td>
+    </tr>
+    <tr>
+      <td><code>colorLinkHover</code></td>
+      <td><code>#0958d9</code></td>
+    </tr>
+  </tbody>
+</table>
 
 Utile pour des tableaux de bord génériques ou pour des clients qui apportent leur propre identité visuelle.
 
@@ -70,12 +104,37 @@ export default function App() {
 
 Ces tokens s'appliquent à tous les presets et modes :
 
-| Token | Valeur | Usage |
-|-------|--------|-------|
-| `borderRadius` | `4px` | Coins arrondis des composants |
-| `fontFamily` | `Inter, system-ui, sans-serif` | Police principale |
-| `linkHoverDecoration` | `underline` | Soulignement des liens au survol |
-| `Timeline.itemPaddingBottom` | `40px` | Espacement des items de timeline |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Valeur</th>
+      <th>Usage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>4px</code></td>
+      <td>Coins arrondis des composants</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>Inter, system-ui, sans-serif</code></td>
+      <td>Police principale</td>
+    </tr>
+    <tr>
+      <td><code>linkHoverDecoration</code></td>
+      <td><code>underline</code></td>
+      <td>Soulignement des liens au survol</td>
+    </tr>
+    <tr>
+      <td><code>Timeline.itemPaddingBottom</code></td>
+      <td><code>40px</code></td>
+      <td>Espacement des items de timeline</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -146,17 +205,52 @@ export const config: DashboardConfig = {
 
 La bibliothèque consomme les tokens sémantiques suivants. Si vous overridez ces tokens dans votre thème, l'effet sera répercuté sur tous les composants qui les utilisent.
 
-| Token | Composants impactés |
-|-------|---------------------|
-| `colorPrimary` | Boutons, liens actifs, indicateurs |
-| `colorLink` / `colorLinkHover` | Tous les liens `<a>` |
-| `colorBgContainer` | Fond des cartes, panneaux, en-têtes sticky |
-| `colorBgElevated` | Légende carte (MapLegend), popups |
-| `colorBorderSecondary` | Bordure du Sider, séparateurs |
-| `colorBorder` | Séparateurs du footer |
-| `colorTextBase` | Labels graphiques ECharts |
-| `colorText` | Texte principal des graphiques |
-| `Form.labelColor` | Labels de formulaire (adapté automatiquement en dark) |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Composants impactés</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>colorPrimary</code></td>
+      <td>Boutons, liens actifs, indicateurs</td>
+    </tr>
+    <tr>
+      <td><code>colorLink</code> / <code>colorLinkHover</code></td>
+      <td>Tous les liens <code>&lt;a&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>colorBgContainer</code></td>
+      <td>Fond des cartes, panneaux, en-têtes sticky</td>
+    </tr>
+    <tr>
+      <td><code>colorBgElevated</code></td>
+      <td>Légende carte (MapLegend), popups</td>
+    </tr>
+    <tr>
+      <td><code>colorBorderSecondary</code></td>
+      <td>Bordure du Sider, séparateurs</td>
+    </tr>
+    <tr>
+      <td><code>colorBorder</code></td>
+      <td>Séparateurs du footer</td>
+    </tr>
+    <tr>
+      <td><code>colorTextBase</code></td>
+      <td>Labels graphiques ECharts</td>
+    </tr>
+    <tr>
+      <td><code>colorText</code></td>
+      <td>Texte principal des graphiques</td>
+    </tr>
+    <tr>
+      <td><code>Form.labelColor</code></td>
+      <td>Labels de formulaire (adapté automatiquement en dark)</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 

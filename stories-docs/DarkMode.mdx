@@ -156,13 +156,44 @@ Les labels et axes des graphiques ECharts consomment `colorTextBase` et `colorTe
 
 ## Référence des valeurs
 
-| Propriété `mode` | Comportement |
-|-----------------|--------------|
-| `'auto'` | Suit `prefers-color-scheme`, réagit aux changements OS |
-| `'light'` | Mode clair forcé, ignore la préférence OS |
-| `'dark'` | Mode sombre forcé, ignore la préférence OS |
+<table>
+  <thead>
+    <tr>
+      <th>Propriété <code>mode</code></th>
+      <th>Comportement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'auto'</code></td>
+      <td>Suit <code>prefers-color-scheme</code>, réagit aux changements OS</td>
+    </tr>
+    <tr>
+      <td><code>'light'</code></td>
+      <td>Mode clair forcé, ignore la préférence OS</td>
+    </tr>
+    <tr>
+      <td><code>'dark'</code></td>
+      <td>Mode sombre forcé, ignore la préférence OS</td>
+    </tr>
+  </tbody>
+</table>
 
-| Valeur `localStorage` (`dashboard-theme-mode`) | Priorité |
-|------------------------------------------------|----------|
-| Absent ou `'auto'` | Préférence OS active |
-| `'light'` ou `'dark'` | Override utilisateur (prime sur OS) |
+<table>
+  <thead>
+    <tr>
+      <th>Valeur <code>localStorage</code> (<code>dashboard-theme-mode</code>)</th>
+      <th>Priorité</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Absent ou <code>'auto'</code></td>
+      <td>Préférence OS active</td>
+    </tr>
+    <tr>
+      <td><code>'light'</code> ou <code>'dark'</code></td>
+      <td>Override utilisateur (prime sur OS)</td>
+    </tr>
+  </tbody>
+</table>
