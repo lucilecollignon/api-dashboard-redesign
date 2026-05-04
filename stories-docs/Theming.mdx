@@ -188,6 +188,76 @@ const myTheme: ThemeConfig = {
 
 ---
 
+## Charger et appeler sa police custom (sans Google Fonts)
+
+Pour utiliser votre propre police sans dépendre de Google Fonts, suivez ces trois étapes.
+
+### 1) Charger les fichiers de police
+
+Placez vos fichiers de police au format `.woff2` dans le dossier `public/font/` de votre projet :
+
+```
+public/
+  font/
+    MaPolice-Regular.woff2
+    MaPolice-Bold.woff2
+```
+
+Le format `woff2` est recommandé : il est compressé, rapide et supporté par tous les navigateurs modernes.
+
+### 2) Déclarer la police dans le CSS global
+
+Dans votre fichier CSS principal (par exemple `src/index.css`), déclarez la police avec `@font-face`.
+Si votre projet contenait un `@import url('https://fonts.googleapis.com/...')`, supprimez-le.
+
+```css
+@font-face {
+  font-family: 'MaPolice';
+  src: url('/font/MaPolice-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaPolice';
+  src: url('/font/MaPolice-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+```
+
+`font-display: swap` permet d'afficher le texte immédiatement avec une police système, puis de basculer vers votre police dès qu'elle est chargée.
+
+### 3) Appeler la police dans le brand
+
+Dans votre `App.tsx`, passez le nom de la police dans `typography.fontFamily` via `createBrandTheme(...)`.
+
+Le thème de base utilise `Inter, system-ui, sans-serif` comme police par défaut. Conservez cette stack en fallback pour que l'interface reste lisible si votre police ne se charge pas :
+
+```tsx
+import { createBrandTheme } from '@geo2france/api-dashboard';
+
+const monBrand = createBrandTheme({
+  name: 'mon-projet',
+  light: {
+    colorPrimary: '#FF6B35',
+  },
+  typography: { fontFamily: "'MaPolice', Inter, system-ui, sans-serif" },
+});
+```
+
+Passez ensuite ce brand à `<DashboardApp>` :
+
+```tsx
+<DashboardApp brand={monBrand} themeMode="auto" />
+```
+
+La police sera appliquée à l'ensemble des composants du tableau de bord (titres, texte courant, boutons, labels de graphiques).
+
+---
+
 ## Logo et branding custom
 
 Le logo du tableau de bord est configuré dans `config.ts` via la propriété `logo` (voir la doc `DashboardApp`). Il est indépendant du preset de thème.
