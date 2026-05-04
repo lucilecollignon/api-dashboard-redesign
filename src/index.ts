@@ -68,8 +68,21 @@ export {
   baseTokens,
   geo2francePalette,
   neutralPalette,
+  createBrandTheme,
+  useBrandLogo,
 } from './theme';
-export type { ThemeName, ThemeMode, ThemeContextValue, ThemeProviderProps } from './theme';
+export type {
+  ThemeName,
+  ThemeMode,
+  ThemeContextValue,
+  ThemeProviderProps,
+  BrandColors,
+  BrandTypography,
+  BrandLogo,
+  BrandTokens,
+  BrandShorthand,
+  BrandThemeBundle,
+} from './theme';
 
 // Types
 export type { SimpleRecord, Partner, RouteConfig } from "./types"

@@ -8,6 +8,7 @@ export type { ThemeName, ThemeMode, ThemeContextValue } from './context';
 
 export { usePreferredColorScheme } from './hooks/usePreferredColorScheme';
 export { useThemeMode } from './hooks/useThemeMode';
+export { useBrandLogo } from './hooks/useBrandLogo';
 
 export { geo2franceLightTheme } from './themes/geo2france.light';
 export { geo2franceDarkTheme } from './themes/geo2france.dark';
@@ -17,3 +18,14 @@ export { neutralDarkTheme } from './themes/neutral.dark';
 export { baseTokens } from './tokens/base';
 export { geo2francePalette } from './tokens/palettes/geo2france';
 export { neutralPalette } from './tokens/palettes/neutral';
+
+// Brand theming API
+export { createBrandTheme, isBundle, isShorthand } from './brand';
+export type {
+  BrandColors,
+  BrandTypography,
+  BrandLogo,
+  BrandTokens,
+  BrandShorthand,
+  BrandThemeBundle,
+} from './brand';

@@ -43,4 +43,35 @@ npm run dev
 
 Consulter la [documentation](https://geo2france.github.io/api-dashboard/) du projet.
 
+## Custom branding
+
+Personnalisez l'apparence de votre dashboard sans modifier la lib :
+
+```tsx
+// Forme courte (1 ligne) — démarrage rapide
+<DashboardApp
+  brand={{ name: 'mon-projet', primary: '#FF6B35', logo: '/logo.svg' }}
+  mode="auto"
+/>
+```
+
+Pour un contrôle plus fin (couleurs multiples, typographie, dark mode explicite), utilisez `createBrandTheme()` :
+
+```ts
+import { createBrandTheme } from '@geo2france/api-dashboard';
+
+export const myBrand = createBrandTheme({
+  name: 'mon-projet',
+  light: { colorPrimary: '#FF6B35', colorLink: '#0046AD' },
+  typography: { fontFamily: 'Inter, sans-serif' },
+  borderRadius: 8,
+  logo: { src: '/logo.svg', alt: 'Mon Projet', srcDark: '/logo-white.svg' },
+});
+```
+
+```tsx
+<DashboardApp brand={myBrand} mode="auto" />
+```
+
+Voir le [CHANGELOG](./CHANGELOG.md) pour le guide de migration complet.
 
