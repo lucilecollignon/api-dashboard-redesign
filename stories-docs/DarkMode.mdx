@@ -4,35 +4,15 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Dark Mode
 
-La bibliothèque supporte le mode sombre nativement. L'algorithme `darkAlgorithm` d'Ant Design est appliqué automatiquement selon le mode actif, sans aucun CSS global à ajouter.
+La bibliothèque gère le mode sombre nativement. L'algorithme `darkAlgorithm` d'Ant Design est appliqué automatiquement selon le mode actif, sans CSS global supplémentaire.
 
 ---
 
-## Activer le mode sombre
+## Configuration du mode
 
-### Via `config.ts`
+La configuration de `themeMode` se fait dans `config.ts` (ou via `<ThemeProvider mode={...}>`).
 
-```ts
-// config.ts
-export const config: DashboardConfig = {
-  theme: "geo2france",
-
-  // 'auto'  → suit la préférence OS (prefers-color-scheme) — recommandé
-  // 'dark'  → forcé en sombre
-  // 'light' → forcé en clair
-  themeMode: "auto",
-};
-```
-
-### Via `<ThemeProvider>` directement
-
-```tsx
-import { ThemeProvider } from '@geo2france/api-dashboard';
-
-<ThemeProvider theme="geo2france" mode="dark">
-  {/* rendu toujours en mode sombre */}
-</ThemeProvider>
-```
+Pour la configuration détaillée de `theme` et `mode`, voir la page **[Theming](?path=/docs/documentation-theming--docs)**.
 
 ---
 
@@ -42,7 +22,7 @@ En mode `auto` (valeur par défaut), la bibliothèque :
 
 1. Lit la préférence système via `window.matchMedia('(prefers-color-scheme: dark)')`.
 2. Réagit **en temps réel** aux changements (ex. : l'OS passe en dark automatiquement la nuit).
-3. Laisse l'utilisateur override manuellement via le `<ThemeToggle>` — le choix est alors **persisté en `localStorage`** (clé `dashboard-theme-mode`).
+3. Permet à l'utilisateur de modifier manuellement le mode via le `<ThemeToggle>` — le choix est alors **persisté en `localStorage`** (clé `dashboard-theme-mode`).
 
 Si l'utilisateur n'a jamais interagi avec le toggle, le mode `auto` est actif. Son choix explicite (`light` ou `dark`) prime sur la préférence OS jusqu'à ce qu'il repasse en `auto`.
 
@@ -60,18 +40,7 @@ import { ThemeToggle } from '@geo2france/api-dashboard';
 <ThemeToggle />
 ```
 
-### Exemple dans la sidebar
-
-```tsx
-// config.ts
-import { ThemeToggle } from '@geo2france/api-dashboard';
-
-export const config: DashboardConfig = {
-  theme: "geo2france",
-  themeMode: "auto",
-  siderBottom: <ThemeToggle />,  // affiché en bas du menu
-};
-```
+Le bouton de basculement est affiché automatiquement en bas de la barre latérale du `DashboardApp`. Aucune configuration supplémentaire n'est nécessaire.
 
 > Le `ThemeToggle` doit obligatoirement être rendu **à l'intérieur** d'un `<ThemeProvider>` (ce que `DashboardApp` garantit automatiquement).
 
@@ -99,7 +68,7 @@ export function MyComponent() {
 
 ### Avec `usePreferredColorScheme`
 
-Pour lire uniquement la préférence OS (sans l'override utilisateur) :
+Pour lire uniquement la préférence OS (sans choix manuel de l'utilisateur) :
 
 ```tsx
 import { usePreferredColorScheme } from '@geo2france/api-dashboard';
@@ -113,7 +82,7 @@ const systemMode = usePreferredColorScheme(); // 'light' | 'dark'
 
 ### Contrastes
 
-Tous les composants de la bibliothèque utilisent des **tokens sémantiques Ant Design** (`colorBgContainer`, `colorText`, `colorBorder`…) qui s'adaptent automatiquement entre les modes. Si vous ajoutez des styles personnalisés dans votre dashboard, préférez toujours les tokens aux couleurs hardcodées :
+Tous les composants de la bibliothèque utilisent des **tokens sémantiques Ant Design** (`colorBgContainer`, `colorText`, `colorBorder`...) qui s'adaptent automatiquement entre les modes. Si vous ajoutez des styles personnalisés dans votre tableau de bord, préférez toujours les tokens aux couleurs en dur :
 
 ```tsx
 import { theme } from 'antd';
@@ -124,12 +93,12 @@ const { token } = theme.useToken();
 const style = { background: token.colorBgContainer, color: token.colorText };
 
 // ❌ Cassé en dark mode
-const style = { background: '#ffffff', color: '#000000' };
+const badStyle = { background: '#ffffff', color: '#000000' };
 ```
 
 ### Images et illustrations
 
-Les images bitmap (`.png`, `.jpg`) ne s'adaptent pas automatiquement au mode sombre. Quelques stratégies :
+Les images bitmap (`.png`, `.jpg`) ne changent pas automatiquement avec le mode sombre. Stratégies conseillées :
 
 - **SVG avec `currentColor`** : hérite de `colorText` et s'adapte automatiquement.
 - **Filtre CSS** : pour les pictogrammes noirs sur fond transparent, appliquer `filter: invert(1)` en dark mode via `resolvedMode`.
@@ -144,6 +113,8 @@ const { resolvedMode } = useThemeContext();
 />
 ```
 
+Pour une configuration complète du logo principal (`src`, `srcDark`, `alt`, dimensions), consultez **[Identité Visuelle](?path=/docs/documentation-identite-visuelle--docs)**.
+
 ### Cartes (MapLibre)
 
 Les fonds de carte (URLs WMS Geo2France) ne s'adaptent pas au mode sombre — ils restent identiques quel que soit le mode. La légende (`MapLegend`) utilise `colorBgElevated` et est correctement adaptée.
@@ -156,13 +127,44 @@ Les labels et axes des graphiques ECharts consomment `colorTextBase` et `colorTe
 
 ## Référence des valeurs
 
-| Propriété `mode` | Comportement |
-|-----------------|--------------|
-| `'auto'` | Suit `prefers-color-scheme`, réagit aux changements OS |
-| `'light'` | Mode clair forcé, ignore la préférence OS |
-| `'dark'` | Mode sombre forcé, ignore la préférence OS |
+<table>
+  <thead>
+    <tr>
+      <th>Propriété <code>mode</code></th>
+      <th>Comportement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>'auto'</code></td>
+      <td>Suit <code>prefers-color-scheme</code>, réagit aux changements OS</td>
+    </tr>
+    <tr>
+      <td><code>'light'</code></td>
+      <td>Mode clair forcé, ignore la préférence OS</td>
+    </tr>
+    <tr>
+      <td><code>'dark'</code></td>
+      <td>Mode sombre forcé, ignore la préférence OS</td>
+    </tr>
+  </tbody>
+</table>
 
-| Valeur `localStorage` (`dashboard-theme-mode`) | Priorité |
-|------------------------------------------------|----------|
-| Absent ou `'auto'` | Préférence OS active |
-| `'light'` ou `'dark'` | Override utilisateur (prime sur OS) |
+<table>
+  <thead>
+    <tr>
+      <th>Valeur <code>localStorage</code> (<code>dashboard-theme-mode</code>)</th>
+      <th>Priorité</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Absent ou <code>'auto'</code></td>
+      <td>Préférence OS active</td>
+    </tr>
+    <tr>
+      <td><code>'light'</code> ou <code>'dark'</code></td>
+      <td>Choix de l'utilisateur (prime sur OS)</td>
+    </tr>
+  </tbody>
+</table>

@@ -17,6 +17,7 @@ import { generateRoutes, getFirstValidElement } from "../../utils/route_utils";
 import renderIcon from "../../utils/icon";
 import { ThemeProvider } from "../../theme";
 import type { ThemeName, ThemeMode } from "../../theme";
+import type { VisualIdentityThemeBundle, VisualIdentityTokens, VisualIdentityShorthand } from "../../theme/visual-identity/types";
 
 const queryClient = new QueryClient()
 
@@ -93,6 +94,12 @@ export interface DashboardConfig {
   theme?: ThemeName | ThemeConfig;
 
   /**
+   * Identité visuelle personnalisée. Accepte un `VisualIdentityThemeBundle`, `VisualIdentityTokens` ou `VisualIdentityShorthand`.
+   * Priorité sur `theme` si les deux sont fournis.
+   */
+  visualIdentity?: VisualIdentityThemeBundle | VisualIdentityTokens | VisualIdentityShorthand;
+
+  /**
    * Mode d'affichage : `'auto'` (suit l'OS), `'light'` ou `'dark'`.
    * @default 'auto'
    */
@@ -124,7 +131,7 @@ export interface DashboardConfig {
  * Les enfants de l'application sont les différentes pages de tableau de bord.
  * La configuration globale de l'application (nom, style, etc.) se fait via les propriétés.
  */
-const DashboardApp: React.FC<DashboardConfig> = ({children, theme, themeMode, routes: routes_legacy, logo, brands, footerSlider, title, subtitle, disablePoweredBy=false}:DashboardConfig) => {
+const DashboardApp: React.FC<DashboardConfig> = ({children, theme, visualIdentity, themeMode, routes: routes_legacy, logo, brands, footerSlider, title, subtitle, disablePoweredBy=false}:DashboardConfig) => {
 
     const context_values = { title, subtitle, logo };
 
@@ -165,7 +172,7 @@ const DashboardApp: React.FC<DashboardConfig> = ({children, theme, themeMode, ro
     
     return (
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={theme} mode={themeMode}>
+          <ThemeProvider theme={theme} visualIdentity={visualIdentity} mode={themeMode}>
           <HelmetProvider>
           <AppContext.Provider value={ context_values }>
             <DatasetRegistryContext.Provider value={ createDatasetRegistry() } >

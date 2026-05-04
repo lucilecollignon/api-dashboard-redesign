@@ -4,21 +4,46 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Theming
 
-La bibliothèque expose un système de thème à deux axes : le **preset de couleurs** (`geo2france` ou `neutral`) et le **mode d'affichage** (`light`, `dark`, ou `auto`). Les deux sont indépendants et combinables librement.
+Le theming repose sur deux réglages simples :
+
+- `theme` choisit la palette de couleurs (`geo2france` ou `neutral`).
+- `themeMode` choisit la luminosité (`light`, `dark` ou `auto`) dans `config.ts`.
+- `mode` choisit la luminosité uniquement si vous utilisez `<ThemeProvider>` directement.
+
+Ces deux réglages sont combinables librement.
+
+Si vous avez besoin d'une identité visuelle complète (couleurs, logo, typographie), utilisez `visualIdentity` (voir la page **[Identité Visuelle](?path=/docs/documentation-identite-visuelle--docs)**). Quand `visualIdentity` est fourni, il est prioritaire sur `theme`.
 
 ---
 
-## Presets disponibles
+## Palettes disponibles
 
 ### `geo2france` (défaut)
 
 Palette officielle du projet Geo2France.
 
-| Token | Valeur |
-|-------|--------|
-| `colorPrimary` | `#95c11f` (vert) |
-| `colorLink` | `#0f4496` (bleu marine) |
-| `colorLinkHover` | `#0D2449` (bleu foncé) |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Valeur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>colorPrimary</code></td>
+      <td><code>#95c11f</code> (vert)</td>
+    </tr>
+    <tr>
+      <td><code>colorLink</code></td>
+      <td><code>#0f4496</code> (bleu marine)</td>
+    </tr>
+    <tr>
+      <td><code>colorLinkHover</code></td>
+      <td><code>#0D2449</code> (bleu foncé)</td>
+    </tr>
+  </tbody>
+</table>
 
 Ce preset est rétrocompatible avec les dashboards existants (Odema, Clicnat, etc.). Il est utilisé par défaut si aucun `theme` n'est spécifié.
 
@@ -26,24 +51,41 @@ Ce preset est rétrocompatible avec les dashboards existants (Odema, Clicnat, et
 
 Palette bleue générique Ant Design, sans branding Geo2France.
 
-| Token | Valeur |
-|-------|--------|
-| `colorPrimary` | `#1677ff` (bleu Ant Design) |
-| `colorLink` | `#1677ff` |
-| `colorLinkHover` | `#0958d9` |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Valeur</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>colorPrimary</code></td>
+      <td><code>#1677ff</code> (bleu Ant Design)</td>
+    </tr>
+    <tr>
+      <td><code>colorLink</code></td>
+      <td><code>#1677ff</code></td>
+    </tr>
+    <tr>
+      <td><code>colorLinkHover</code></td>
+      <td><code>#0958d9</code></td>
+    </tr>
+  </tbody>
+</table>
 
 Utile pour des tableaux de bord génériques ou pour des clients qui apportent leur propre identité visuelle.
 
 ---
 
-## Configurer le preset
+## Configurer le thème
 
 ### Via `config.ts` (recommandé)
 
 ```ts
 // config.ts
 export const config: DashboardConfig = {
-  theme: "geo2france",  // ou "neutral"
+  theme: "geo2france", // ou "neutral"
   themeMode: "auto",
 };
 ```
@@ -66,102 +108,132 @@ export default function App() {
 
 ---
 
-## Tokens de base partagés
+## Réglages de base communs
 
 Ces tokens s'appliquent à tous les presets et modes :
 
-| Token | Valeur | Usage |
-|-------|--------|-------|
-| `borderRadius` | `4px` | Coins arrondis des composants |
-| `fontFamily` | `Inter, system-ui, sans-serif` | Police principale |
-| `linkHoverDecoration` | `underline` | Soulignement des liens au survol |
-| `Timeline.itemPaddingBottom` | `40px` | Espacement des items de timeline |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Valeur</th>
+      <th>Usage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>borderRadius</code></td>
+      <td><code>4px</code></td>
+      <td>Coins arrondis des composants</td>
+    </tr>
+    <tr>
+      <td><code>fontFamily</code></td>
+      <td><code>Inter, system-ui, sans-serif</code></td>
+      <td>Police principale</td>
+    </tr>
+    <tr>
+      <td><code>linkHoverDecoration</code></td>
+      <td><code>underline</code></td>
+      <td>Soulignement des liens au survol</td>
+    </tr>
+    <tr>
+      <td><code>Timeline.itemPaddingBottom</code></td>
+      <td><code>40px</code></td>
+      <td>Espacement des items de timeline</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
-## Override partiel
-
-### Couleurs personnalisées
-
-Pour surcharger uniquement les couleurs sans remplacer tout le preset, passez un objet `ThemeConfig` (usage déprécié, mais toujours supporté avec avertissement console) :
-
-```tsx
-import { ThemeProvider } from '@geo2france/api-dashboard';
-import type { ThemeConfig } from 'antd';
-
-const myTheme: ThemeConfig = {
-  token: {
-    colorPrimary: '#e63946',  // rouge personnalisé
-  },
-};
-
-// ⚠️ Déprécié — affiche un warning console.
-// La config est mergée avec geo2france par défaut.
-<ThemeProvider theme={myTheme}>
-  ...
-</ThemeProvider>
-```
-
-> **Recommandation** : si vous avez besoin d'un preset sur mesure, contribuez une palette dans `src/theme/tokens/palettes/` plutôt que de passer un `ThemeConfig` brut.
-
-### Typographie
-
-La police peut être changée via le token `fontFamily` :
-
-```tsx
-const myTheme: ThemeConfig = {
-  token: {
-    fontFamily: 'Marianne, Arial, sans-serif',
-  },
-};
-```
-
-### Espacements et rayons
-
-```tsx
-const myTheme: ThemeConfig = {
-  token: {
-    borderRadius: 8,      // coins plus arrondis
-    borderRadiusLG: 12,
-  },
-};
-```
-
----
-
-## Logo et branding custom
+## Logo et identité visuelle personnalisée
 
 Le logo du tableau de bord est configuré dans `config.ts` via la propriété `logo` (voir la doc `DashboardApp`). Il est indépendant du preset de thème.
 
 ```ts
 export const config: DashboardConfig = {
   theme: "neutral",
-  logo: <img src="/mon-logo.svg" alt="Mon organisation" height={32} />,
+  logo: "/mon-logo.svg",
 };
 ```
 
 ---
 
-## Tokens Ant Design utilisés dans la bibliothèque
+## Principaux tokens Ant Design utilisés
 
-La bibliothèque consomme les tokens sémantiques suivants. Si vous overridez ces tokens dans votre thème, l'effet sera répercuté sur tous les composants qui les utilisent.
+La bibliothèque consomme les tokens sémantiques suivants. Si vous surchargez ces tokens dans votre thème, l'effet sera répercuté sur tous les composants qui les utilisent.
 
-| Token | Composants impactés |
-|-------|---------------------|
-| `colorPrimary` | Boutons, liens actifs, indicateurs |
-| `colorLink` / `colorLinkHover` | Tous les liens `<a>` |
-| `colorBgContainer` | Fond des cartes, panneaux, en-têtes sticky |
-| `colorBgElevated` | Légende carte (MapLegend), popups |
-| `colorBorderSecondary` | Bordure du Sider, séparateurs |
-| `colorBorder` | Séparateurs du footer |
-| `colorTextBase` | Labels graphiques ECharts |
-| `colorText` | Texte principal des graphiques |
-| `Form.labelColor` | Labels de formulaire (adapté automatiquement en dark) |
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Composants impactés</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>colorPrimary</code></td>
+      <td>Boutons, liens actifs, indicateurs</td>
+    </tr>
+    <tr>
+      <td><code>colorLink</code> / <code>colorLinkHover</code></td>
+      <td>Tous les liens <code>&lt;a&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>colorBgContainer</code></td>
+      <td>Fond des cartes, panneaux, en-têtes sticky</td>
+    </tr>
+    <tr>
+      <td><code>colorBgElevated</code></td>
+      <td>Légende carte (MapLegend), popups</td>
+    </tr>
+    <tr>
+      <td><code>colorBorderSecondary</code></td>
+      <td>Bordure du Sider, séparateurs</td>
+    </tr>
+    <tr>
+      <td><code>colorBorder</code></td>
+      <td>Séparateurs du footer</td>
+    </tr>
+    <tr>
+      <td><code>colorTextBase</code></td>
+      <td>Labels graphiques ECharts</td>
+    </tr>
+    <tr>
+      <td><code>colorText</code></td>
+      <td>Texte principal des graphiques</td>
+    </tr>
+    <tr>
+      <td><code>Form.labelColor</code></td>
+      <td>Labels de formulaire (adapté automatiquement en dark)</td>
+    </tr>
+    <tr>
+      <td><code>colorTextSecondary</code></td>
+      <td>Axes et labels secondaires des graphiques ECharts</td>
+    </tr>
+    <tr>
+      <td><code>colorFill</code></td>
+      <td>Dégradé du footer</td>
+    </tr>
+    <tr>
+      <td><code>colorIcon</code></td>
+      <td>Icônes d'état vide</td>
+    </tr>
+    <tr>
+      <td><code>colorTextLabel</code></td>
+      <td>Labels de contrôle dans les sélecteurs</td>
+    </tr>
+    <tr>
+      <td><code>colorFillSecondary</code></td>
+      <td>Arrière-plan secondaire du Sider (utilisation prévue)</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
-## Règle critique Ant Design v6
+## Note pour les contributeurs
 
-> **Ne jamais mettre de couleurs dans `baseTokens`.**
+> **Règle critique Ant Design v6 : ne mettez jamais de couleurs dans `baseTokens`.**
 >
 > Le `darkAlgorithm` d'Ant Design ne peut pas écraser les tokens couleur définis dans la configuration de base ([issue #53719](https://github.com/ant-design/ant-design/issues/53719)). Toutes les couleurs sont donc définies exclusivement dans les palettes (`tokens/palettes/`) et les thèmes complets (`themes/`).

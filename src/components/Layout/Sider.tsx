@@ -10,6 +10,7 @@ import { AppContext } from "./DashboardApp";
 import { Icon } from "@iconify/react";
 import { Z_INDEX } from "../../utils/zIndex";
 import { ThemeToggle } from "../../theme";
+import { useVisualIdentityLogo } from "../../theme/hooks/useVisualIdentityLogo";
 const { Text } = Typography
 
 const style_img: CSSProperties = {
@@ -28,6 +29,9 @@ interface DbSiderProps {
 
 const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, poweredBy=true}) => {
   const {logo: appLogo, title} = useContext(AppContext)
+  const visualIdentityLogo = useVisualIdentityLogo();
+  const effectiveLogo = logo ?? visualIdentityLogo?.src ?? appLogo;
+  const effectiveAlt = visualIdentityLogo?.alt ?? title;
 
   const { token } = theme.useToken();
   const { pathname:selectedKey } = useLocation();
@@ -83,7 +87,7 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
                 display:collapsed ? 'none' : undefined,
                 marginTop:8, marginLeft:8
                 }}>
-              <img style={style_img} src={appLogo} alt={title} />{/* TODO : utiliser une version mini du logo en affichage mobile */}
+              <img style={style_img} src={effectiveLogo} alt={effectiveAlt} />
             </NavLink>
             <Divider style={{display:collapsed ? 'none' : undefined}} type="vertical" />
             <Button 

@@ -68,8 +68,21 @@ export {
   baseTokens,
   geo2francePalette,
   neutralPalette,
+  createVisualIdentity,
+  useVisualIdentityLogo,
 } from './theme';
-export type { ThemeName, ThemeMode, ThemeContextValue, ThemeProviderProps } from './theme';
+export type {
+  ThemeName,
+  ThemeMode,
+  ThemeContextValue,
+  ThemeProviderProps,
+  VisualIdentityColors,
+  VisualIdentityTypography,
+  VisualIdentityLogo,
+  VisualIdentityTokens,
+  VisualIdentityShorthand,
+  VisualIdentityThemeBundle,
+} from './theme';
 
 // Types
 export type { SimpleRecord, Partner, RouteConfig } from "./types"

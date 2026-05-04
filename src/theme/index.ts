@@ -8,6 +8,7 @@ export type { ThemeName, ThemeMode, ThemeContextValue } from './context';
 
 export { usePreferredColorScheme } from './hooks/usePreferredColorScheme';
 export { useThemeMode } from './hooks/useThemeMode';
+export { useVisualIdentityLogo } from './hooks/useVisualIdentityLogo';
 
 export { geo2franceLightTheme } from './themes/geo2france.light';
 export { geo2franceDarkTheme } from './themes/geo2france.dark';
@@ -17,3 +18,14 @@ export { neutralDarkTheme } from './themes/neutral.dark';
 export { baseTokens } from './tokens/base';
 export { geo2francePalette } from './tokens/palettes/geo2france';
 export { neutralPalette } from './tokens/palettes/neutral';
+
+// Visual identity theming API
+export { createVisualIdentity, isBundle, isShorthand } from './visual-identity';
+export type {
+  VisualIdentityColors,
+  VisualIdentityTypography,
+  VisualIdentityLogo,
+  VisualIdentityTokens,
+  VisualIdentityShorthand,
+  VisualIdentityThemeBundle,
+} from './visual-identity';
