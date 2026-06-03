@@ -101,6 +101,11 @@ export interface DashboardConfig {
 
   /**
    * Mode d'affichage : `'auto'` (suit l'OS), `'light'` ou `'dark'`.
+   *
+   * Forcer `'light'` ou `'dark'` rend ce mode autoritaire et **masque
+   * automatiquement** le bouton de changement de mode (l'utilisateur final ne
+   * peut plus en changer). `'auto'` (défaut) affiche le bouton.
+   *
    * @default 'auto'
    */
   themeMode?: ThemeMode;

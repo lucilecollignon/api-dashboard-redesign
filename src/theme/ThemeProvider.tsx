@@ -86,8 +86,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 }) => {
   const { mode, resolvedMode, setMode } = useThemeMode();
 
-  const effectiveResolvedMode = modeProp !== 'auto' && mode === 'auto' ? modeProp : resolvedMode;
-  const effectiveMode = modeProp !== 'auto' && mode === 'auto' ? modeProp : mode;
+  // Quand l'intégrateur force un mode (≠ 'auto'), celui-ci est autoritaire :
+  // il ignore le choix localStorage et le switcher est masqué (voir Sider).
+  const isModeLocked = modeProp !== 'auto';
+  const effectiveMode = isModeLocked ? modeProp : mode;
+  const effectiveResolvedMode = isModeLocked ? modeProp : resolvedMode;
 
   const modeKey: 'light' | 'dark' = effectiveResolvedMode === 'dark' ? 'dark' : 'light';
 
@@ -137,6 +140,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
         themeName: resolvedThemeName,
         mode: effectiveMode,
         resolvedMode: effectiveResolvedMode === 'dark' ? 'dark' : 'light',
+        isModeLocked,
         setMode,
         logo,
       }}

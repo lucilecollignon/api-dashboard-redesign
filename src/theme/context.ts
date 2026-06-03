@@ -11,6 +11,8 @@ export interface ThemeContextValue {
   mode: ThemeMode;
   /** Mode résolu (jamais 'auto' — 'light' ou 'dark' effectif) */
   resolvedMode: 'light' | 'dark';
+  /** true quand le mode est forcé par l'intégrateur (themeMode ≠ 'auto') — le switcher doit alors être masqué */
+  isModeLocked: boolean;
   /** Changer le mode (persiste en localStorage) */
   setMode: (mode: ThemeMode) => void;
   /** Logo de l'identité visuelle (fourni via `visualIdentity`) */
@@ -21,6 +23,7 @@ export const ThemeContext = createContext<ThemeContextValue>({
   themeName: 'geo2france',
   mode: 'light',
   resolvedMode: 'light',
+  isModeLocked: false,
   setMode: () => undefined,
 });
 

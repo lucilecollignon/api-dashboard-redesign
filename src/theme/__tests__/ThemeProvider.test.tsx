@@ -39,6 +39,7 @@ const ThemeConsumer = () => {
       <span data-testid="themeName">{ctx.themeName}</span>
       <span data-testid="mode">{ctx.mode}</span>
       <span data-testid="resolvedMode">{ctx.resolvedMode}</span>
+      <span data-testid="isModeLocked">{String(ctx.isModeLocked)}</span>
     </div>
   );
 };
@@ -111,6 +112,69 @@ describe('ThemeProvider — résolution du mode', () => {
 
   test('mode="auto" + OS dark (matchMedia.matches = true) → resolvedMode = dark', () => {
     window.matchMedia = makeMockMatchMedia(true);
+    render(
+      <ThemeProvider mode="auto">
+        <ThemeConsumer />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('resolvedMode')).toHaveTextContent('dark');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5.1.2bis — Mode verrouillé (themeMode forcé → switcher masqué)
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('ThemeProvider — mode verrouillé (isModeLocked)', () => {
+  test('mode="light" → isModeLocked = true', () => {
+    render(
+      <ThemeProvider mode="light">
+        <ThemeConsumer />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('isModeLocked')).toHaveTextContent('true');
+  });
+
+  test('mode="dark" → isModeLocked = true', () => {
+    render(
+      <ThemeProvider mode="dark">
+        <ThemeConsumer />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('isModeLocked')).toHaveTextContent('true');
+  });
+
+  test('mode="auto" → isModeLocked = false', () => {
+    render(
+      <ThemeProvider mode="auto">
+        <ThemeConsumer />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('isModeLocked')).toHaveTextContent('false');
+  });
+
+  test('sans prop mode → isModeLocked = false (défaut auto)', () => {
+    render(
+      <ThemeProvider>
+        <ThemeConsumer />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('isModeLocked')).toHaveTextContent('false');
+  });
+
+  test('mode forcé autoritaire : localStorage="dark" + mode="light" → resolvedMode = light', () => {
+    localStorage.setItem('dashboard-theme-mode', 'dark');
+    render(
+      <ThemeProvider mode="light">
+        <ThemeConsumer />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('resolvedMode')).toHaveTextContent('light');
+    expect(screen.getByTestId('mode')).toHaveTextContent('light');
+  });
+
+  test('mode="auto" : le choix localStorage="dark" est respecté', () => {
+    localStorage.setItem('dashboard-theme-mode', 'dark');
     render(
       <ThemeProvider mode="auto">
         <ThemeConsumer />

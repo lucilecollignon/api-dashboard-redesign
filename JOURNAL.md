@@ -207,6 +207,52 @@ Suppression de l'import `React` inutilisé dans `ThemeProvider.test.tsx` (erreur
 
 ---
 
+## Phase 6b — Masquage automatique du switcher de mode
+**Branche :** `main`
+**Commit :** _(non commité)_
+**Date :** 1er juin 2026
+**Fichiers modifiés :** 4 (theme + layout), 1 fichier de test
+
+### Besoin
+
+Quand l'intégrateur force un mode via `themeMode="light"` / `"dark"`, le bouton
+`<ThemeToggle>` restait **visible** dans la sidebar : l'utilisateur final pouvait
+re-changer le mode, contredisant l'intention de l'intégrateur. Objectif : pouvoir
+désactiver complètement le switcher.
+
+### Décision
+
+**Masquage automatique** (pas de nouvelle prop) : forcer un mode (`≠ 'auto'`) cache
+le bouton. `themeMode="auto"` (défaut) l'affiche. Compromis assumé : le cas « défaut
+forcé mais switchable » n'est pas couvert (option `showThemeToggle`/`hideThemeToggle`
+écartée pour garder l'API minimale).
+
+### Changements
+
+| Fichier | Modification |
+|---------|-------------|
+| `theme/context.ts` | Ajout de `isModeLocked: boolean` à `ThemeContextValue` (+ défaut `false`) |
+| `theme/ThemeProvider.tsx` | `isModeLocked = modeProp !== 'auto'` ; le mode forcé devient **autoritaire** (ignore `localStorage`) et est exposé dans le contexte |
+| `components/Layout/Sider.tsx` | Rendu conditionnel : `{ !isModeLocked && <ThemeToggle /> }` |
+| `components/Layout/DashboardApp.tsx` | JSDoc de `themeMode` : précise le masquage auto |
+
+### Point critique
+
+Le mode forcé est désormais **prioritaire sur `localStorage`**. Sans ça, un visiteur
+de retour avec un mode `dark` mémorisé serait resté bloqué en sombre malgré
+`themeMode="light"`, le bouton caché l'empêchant de corriger. L'ancienne logique de
+blending (`modeProp !== 'auto' && mode === 'auto' ? modeProp : mode`) est remplacée
+par `isModeLocked ? modeProp : mode`.
+
+### Tests
+
+`ThemeProvider.test.tsx` : +6 tests (valeur de `isModeLocked` selon `mode`, mode forcé
+autoritaire face à un `localStorage` contradictoire, respect du choix `localStorage` en
+`auto`). Suite thème : **59/59 ✅**, `tsc --noEmit` OK. Pas de test de rendu Sider ajouté
+(condition triviale, déjà couverte par `isModeLocked` ; à valider visuellement en Storybook).
+
+---
+
 ## État des phases
 
 | Phase | Statut | Commit | Branche |
