@@ -28,8 +28,8 @@ export const Default: Story = {
                 <DemoPage title="Dashboard 3" icon="icon-park-solid:web-page" />
         ],
         theme: default_theme,
-        brands:[{name:"Acme", logo:"https://static.wikia.nocookie.net/fictionalcompanies/images/c/c2/ACME_Corporation.png/revision/latest?cb=20230628025220"},
-            {name:"WB", url:"https://www.warnerbros.com/", logo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Warner_Bros._logo_2023.svg/langfr-960px-Warner_Bros._logo_2023.svg.png"}
+        brands:[{name:"Acme", logo:"https://static.wikia.nocookie.net/fictionalcompanies/images/c/c2/ACME_Corporation.png/revision/latest?cb=20230628025220", height: 56},
+            {name:"WB", url:"https://www.warnerbros.com/", logo:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Warner_Bros._logo_2023.svg/langfr-960px-Warner_Bros._logo_2023.svg.png", height: 40}
         ],
         footerSlider: false,
         disablePoweredBy: false
