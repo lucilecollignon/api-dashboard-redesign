@@ -3,13 +3,13 @@ import { CSSProperties, useContext, useEffect, useState } from "react";
 import Slider from "@ant-design/react-slick";
 
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
+import { Icon } from "@iconify/react";
 import { Partner } from "../../types";
 import { AppContext } from "./DashboardApp";
 import { Z_INDEX } from "../../utils/zIndex";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Icon } from "@iconify/react";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -20,6 +20,35 @@ interface DbFooterProps {
     brands?: Partner[];
     slider?: boolean;
 }
+
+/* Logo d'un partenaire.
+ * - Lien (nouvel onglet sécurisé) uniquement si l'URL est fournie, sinon image seule.
+ * - Hauteur uniforme via le style passé (height fixe + objectFit contain).
+ */
+const PartnerLogo: React.FC<{ partner: Partner; style: CSSProperties }> = ({ partner, style }) => {
+  const img = (
+    <img
+      style={style}
+      src={partner.logo}
+      alt={partner.name}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+    />
+  );
+  return partner.url ? (
+    <a
+      href={partner.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${partner.name} (ouvre un nouvel onglet)`}
+    >
+      {img}
+    </a>
+  ) : (
+    img
+  );
+};
 
 export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) => {
   const [isCollapsed, setIsCollapsed] = useState(window.innerWidth < 768 ? true : false);
@@ -58,26 +87,24 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
 
   const app_context = useContext(AppContext)
 
-  // Style avec slider (l'image occupe tout le bloc défilé)
-  const style_img: CSSProperties = slider ? {
-    maxHeight: "60px",
+  // Base commune : hauteur fixe uniforme pour tous les logos, sans déformation
+  const style_img_base: CSSProperties = {
+    height: 48,
+    width: "auto",
     maxWidth: "100%",
-    margin: "auto"
-  }
-  // Style sans slider
-  : {
-    maxHeight: "60px",
-    marginRight: "20px",
+    objectFit: "contain",
   };
+  // Variante slider : centrage dans la slide. Variante flex : pas de marge (gérée par le conteneur).
+  const style_img: CSSProperties = slider
+    ? { ...style_img_base, margin: "auto" }
+    : style_img_base;
 
   const nbBrands = brands?.length || 0
 
   // Contenu du footer = logos des partenaires
   // TODO : doit pouvoir être surchargé par l'utilisateur
-  const footerContent = brands?.map((p:Partner) => (
-    <a href={p.url} key={p.name}>
-      <img style={style_img} src={p.logo} alt={p.name} />
-    </a>
+  const footerContent = brands?.map((p: Partner, i: number) => (
+    <PartnerLogo key={`${p.name}-${i}`} partner={p} style={style_img} />
   ))
 
   return (
@@ -99,27 +126,76 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
         zIndex: Z_INDEX.FOOTER,
       }}
     >
-     {showScrollIndicator &&   
-      /* Shaddow + chevron : show the user that remaing content is avaible downside */
+      {/* Animations de l'indicateur de scroll (apparition/disparition + survol) */}
+      <style>
+        {`
+          .scroll-indicator {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+          }
+          .scroll-indicator--visible {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          .scroll-indicator__icon {
+            pointer-events: none;
+            transition: color 0.2s ease;
+          }
+          .scroll-indicator--visible .scroll-indicator__icon {
+            pointer-events: auto;
+          }
+          .scroll-indicator--visible .scroll-indicator__icon:hover {
+            color: ${token.colorPrimary};
+            animation: scroll-indicator-bob 0.9s ease-in-out infinite;
+          }
+          @keyframes scroll-indicator-bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .scroll-indicator,
+            .scroll-indicator__icon {
+              transition: none;
+            }
+            .scroll-indicator--visible {
+              transform: none;
+            }
+            .scroll-indicator--visible .scroll-indicator__icon:hover {
+              animation: none;
+            }
+          }
+        `}
+      </style>
+      {/* Dégradé + chevron : indique à l'utilisateur qu'il reste du contenu à scroller */}
       <div
-      className="scroll-indicator"
+        className={`scroll-indicator${showScrollIndicator ? " scroll-indicator--visible" : ""}`}
+        aria-hidden
         style={{
           position: "absolute",
-          top: -40, 
+          top: -250,
           left: 0,
           right: 0,
-          height: 40,
+          height: 250,
           pointerEvents: "none",
-          display: "flex", 
-          justifyContent:"center",
-          alignContent:"flex-end",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-end",
+          paddingBottom: 8,
+          backdropFilter: "blur(4px)",
+          WebkitBackdropFilter: "blur(4px)",
+          maskImage: "linear-gradient(to bottom, transparent, black)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, black)",
           background:
-            `linear-gradient(to bottom, transparent, ${token.colorFill})`,
+            `linear-gradient(to bottom, transparent, ${token.colorBgContainer})`,
         }}
       >
-        <Icon icon="fa6-solid:chevron-down" fontSize={ 35 } color={ token.colorPrimary } />
-      </div> 
-}
+        <Icon
+          icon="material-symbols:keyboard-arrow-down-rounded"
+          className="scroll-indicator__icon"
+          style={{ color: token.colorText, fontSize: 28 }}
+        />
+      </div>
 
       {/* Texte affiché uniquement lorsque le footer est rétracté */}
       {isCollapsed && (
@@ -129,42 +205,56 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
       {/* Logos et contenu du footer affichés lorsque déplié */}
       <div style={{display: isCollapsed ? "none" : "block", padding: "10px 0"}}>
         {
-          slider
+          // Aucun partenaire : on garde le footer (texte + bouton) mais pas de zone logos
+          nbBrands === 0
+          ? null
+          : slider
           // Logos avec défilement (choix par défaut)
           ? <Slider
-              // Défilement auto si plus de logos que la lagreur de l'écran ne peut en afficher
+              // Défilement auto si plus de logos que la largeur de l'écran ne peut en afficher.
+              // On défile une "page" entière à la fois (slidesToScroll = slidesToShow).
               autoplay={nbBrands > 4}
-              slidesToShow={Math.min(nbBrands, 4)}
+              slidesToShow={Math.max(1, Math.min(nbBrands, 4))}
+              slidesToScroll={Math.max(1, Math.min(nbBrands, 4))}
               responsive={[
                 {
                   breakpoint: 1024,
                   settings: {
                     autoplay: nbBrands > 3,
-                    slidesToShow: Math.min(nbBrands, 3)
+                    slidesToShow: Math.max(1, Math.min(nbBrands, 3)),
+                    slidesToScroll: Math.max(1, Math.min(nbBrands, 3))
                   }
                 },
                 {
                   breakpoint: 600,
                   settings: {
                     autoplay: nbBrands > 2,
-                    slidesToShow: Math.min(nbBrands, 2)
+                    slidesToShow: Math.max(1, Math.min(nbBrands, 2)),
+                    slidesToScroll: Math.max(1, Math.min(nbBrands, 2))
                   }
                 },
                 {
                   breakpoint: 480,
-                  settings: {slidesToShow: 1}
+                  settings: {slidesToShow: 1, slidesToScroll: 1}
                 }
               ]}
-              slidesToScroll={1}
               infinite={true}
               arrows={false} // affichées en dehors du footer et blanc sur blanc
-              autoplaySpeed={3000}
+              autoplaySpeed={6000}
               speed={1000}
             >
               {footerContent}
             </Slider>
-          // Défilement désactivé
-          : footerContent
+          // Défilement désactivé : logos en ligne, centrés et repliables
+          : <div style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 20,
+            }}>
+              {footerContent}
+            </div>
         }
       </div>
 
