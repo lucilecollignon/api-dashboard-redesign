@@ -17,6 +17,13 @@ export const baseTokens: Pick<ThemeConfig, 'token' | 'components'> = {
     Timeline: {
       itemPaddingBottom: 40,
     },
+    Tooltip: {
+      // Padding horizontal (gauche/droite) du contenu des tooltips.
+      // Ant Design v6 calcule ce padding à partir du token global `paddingXS`
+      // (8px par défaut) ; on le surcharge ici uniquement pour le composant
+      // Tooltip afin que tous les tooltips de l'app soient cohérents.
+      paddingXS: 12,
+    },
     // Form.labelColor dépend du mode (light/dark) → défini dans chaque thème complet
   },
 };

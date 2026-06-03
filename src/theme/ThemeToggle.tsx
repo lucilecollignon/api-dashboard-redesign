@@ -6,7 +6,7 @@ import { useThemeContext } from './context';
 const CYCLE: ThemeMode[] = ['auto', 'light', 'dark'];
 
 const LABELS: Record<ThemeMode, string> = {
-  auto: 'Mode auto (système)',
+  auto: 'Mode auto',
   light: 'Mode clair',
   dark: 'Mode sombre',
 };
@@ -17,11 +17,18 @@ const ICONS: Record<ThemeMode, React.ReactNode> = {
   dark: <MoonOutlined />,
 };
 
+interface ThemeToggleProps {
+  /** Bouton pleine largeur (utile dans une colonne, ex. footer de la sidebar). */
+  block?: boolean;
+  /** Affiche le libellé du mode à côté de l'icône (et masque l'infobulle redondante). */
+  showLabel?: boolean;
+}
+
 /**
  * Bouton qui cycle entre les modes `auto → light → dark → auto`.
  * Doit être rendu à l'intérieur d'un `<ThemeProvider>`.
  */
-export const ThemeToggle: React.FC = () => {
+export const ThemeToggle: React.FC<ThemeToggleProps> = ({ block = false, showLabel = false }) => {
   const { mode, setMode } = useThemeContext();
 
   const handleClick = () => {
@@ -31,13 +38,26 @@ export const ThemeToggle: React.FC = () => {
   };
 
   return (
-    <Tooltip title={LABELS[mode]}>
+    <Tooltip title={LABELS[mode]} placement="right" open={showLabel ? false : undefined}>
       <Button
         type="text"
-        icon={ICONS[mode]}
+        icon={<span style={{ fontSize: 18, lineHeight: 0, display: "inline-flex" }}>{ICONS[mode]}</span>}
         onClick={handleClick}
         aria-label={LABELS[mode]}
-      />
+        block={block}
+        style={{
+          height: 40,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: block ? "flex-start" : "center",
+          paddingInline: block ? 16 : 0,
+          width: block ? undefined : 40,
+          borderRadius: 8,
+          textAlign: "left",
+        }}
+      >
+        {showLabel && LABELS[mode]}
+      </Button>
     </Tooltip>
   );
 };
