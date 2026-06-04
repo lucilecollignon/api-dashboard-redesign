@@ -85,6 +85,7 @@ interface IControlProps {
 export const DSL_Control: React.FC<IControlProps> = ({ children }) => {
   const context_controls = useContext(ControlContext);
   const [form] = Form.useForm();
+  const { token } = theme.useToken();
 
   useEffect(() => {
     handleChange(form?.getFieldsValue(true)); // Appliquer les valeurs par défaut au contexte lors de l'initialisation du composant
@@ -112,7 +113,13 @@ export const DSL_Control: React.FC<IControlProps> = ({ children }) => {
 
 
   return (
-    <Form onValuesChange={handleChange} layout="inline" initialValues={initialValues} form={form}>
+    <Form
+      onValuesChange={handleChange}
+      layout="inline"
+      initialValues={initialValues}
+      form={form}
+      style={{ columnGap: token.marginMD, rowGap: token.marginSM }}
+    >
       {children}
     </Form>
   );
