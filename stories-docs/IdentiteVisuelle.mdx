@@ -6,7 +6,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 La `visualIdentity` permet de définir l'identité visuelle complète d'un projet : couleurs, logo et typographie.
 
-Utilisez-la quand votre tableau de bord doit respecter une charte graphique spécifique. Si vous utilisez `visualIdentity` et `theme` en même temps, `visualIdentity` est prioritaire.
+Utilisez-la quand votre tableau de bord doit respecter une charte graphique spécifique. Si `visualIdentity` et `theme` sont fournis ensemble, `visualIdentity` prime (détaillé dans la section « Priorité entre `theme` et `visualIdentity` » plus bas).
 
 ---
 
@@ -27,6 +27,8 @@ export const config: DashboardConfig = {
 };
 ```
 
+La couleur `primary` alimente `light.colorPrimary` ; le mode sombre en est automatiquement dérivé. Pour distinguer les couleurs claires et sombres, ou ajouter typographie, logo et rayon des angles, passez à la **configuration détaillée** ci-dessous.
+
 ---
 
 ## Configuration détaillée
@@ -43,12 +45,10 @@ export const config: DashboardConfig = {
     light: {
       colorPrimary: '#0055cc',
       colorLink: '#0055cc',
-      colorLinkHover: '#003a8c',
     },
     dark: {
       colorPrimary: '#7aa6ff',
       colorLink: '#7aa6ff',
-      colorLinkHover: '#9dbdff',
     },
     typography: {
       fontFamily: "'Marianne', Inter, system-ui, sans-serif",
@@ -70,6 +70,8 @@ export const config: DashboardConfig = {
 ## Utiliser `createVisualIdentity()`
 
 Vous pouvez aussi préparer votre identité visuelle avec `createVisualIdentity()` puis la passer à `DashboardApp`.
+
+`createVisualIdentity()` n'est **pas un niveau de configuration supplémentaire** : la fonction accepte exactement les mêmes entrées que les sections précédentes (`VisualIdentityShorthand` ou `VisualIdentityTokens`) et produit le **même résultat**. Passer l'objet brut à `visualIdentity` est équivalent, car le `ThemeProvider` l'enveloppe automatiquement pour vous. Construisez le bundle vous-même uniquement pour le **réutiliser** (plusieurs apps, Storybook, tests), garder une **référence stable** hors du rendu, ou **inspecter le `ThemeConfig`** généré avant de le passer.
 
 ```tsx
 import { DashboardApp, createVisualIdentity } from '@geo2france/api-dashboard';
@@ -93,6 +95,21 @@ export default function App() {
   return <DashboardApp visualIdentity={monIdentiteVisuelle} themeMode="auto" />;
 }
 ```
+
+---
+
+## Couleur de marque & contraste
+
+**Problème.** Une primaire à faible contraste sur la surface du conteneur (couleur claire ou saturée) est illisible en texte ou en icône — elle échoue [WCAG 1.4.3](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum) (texte, 4.5:1) et [1.4.11](https://www.w3.org/WAI/WCAG21/Understanding/non-text-contrast) (UI, 3:1).
+
+**Comportement.** La bibliothèque n'utilise jamais `colorPrimary` en **avant-plan** (texte, icône, bordure, focus) là où le contraste échoue : elle substitue un neutre accessible (`colorText`), **par mode**, mesuré contre la surface résolue. `colorPrimary` reste utilisé en **remplissage** (boutons pleins, fond de l'item de menu sélectionné) et en avant-plan partout où le contraste passe — typiquement en mode sombre. Conséquence attendue : un libellé de marque peut apparaître neutre en mode clair et coloré en mode sombre.
+
+**En dev.** Un `console.warn` liste les modes où la substitution s'applique, avec le nom de l'identité visuelle concernée.
+
+> **Pourquoi seulement `colorPrimary` et `colorLink` ?**
+> `VisualIdentityColors` accepte deux couleurs : `colorPrimary` et `colorLink` (optionnelle). Tout le reste en **découle automatiquement** : Ant Design dérive de vos couleurs et du mode les tokens comme `colorLinkHover`, `colorTextBase` ou `colorSuccess`, que les composants consomment — vous n'avez pas à les définir. `colorLinkHover` se dérive de `colorLink` ; `colorTextBase` est la fondation de l'échelle de texte, dont dépendent les garanties de contraste.
+>
+> Pour un contrôle fin (cas expert), vous pouvez définir n'importe quel token via le `ConfigProvider` natif d'Ant Design — sans la substitution automatique décrite plus haut.
 
 ---
 

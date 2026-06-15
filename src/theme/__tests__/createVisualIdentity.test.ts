@@ -98,7 +98,39 @@ describe('createVisualIdentity', () => {
     });
   });
 
+  describe('surface API réduite (trim)', () => {
+    test('les champs retirés ne sont plus propagés dans le token', () => {
+      // Simule un appelant legacy passant des champs désormais hors de l'API typée.
+      const input = {
+        name: 'legacy',
+        light: { colorPrimary: '#0046AD', colorSuccess: '#00ff00', colorBgLayout: '#eeeeee' },
+      } as unknown as VisualIdentityTokens;
+      const result = createVisualIdentity(input);
+
+      expect(result.light.token?.colorPrimary).toBe('#0046AD');
+      expect((result.light.token as Record<string, unknown>).colorSuccess).toBeUndefined();
+      expect((result.light.token as Record<string, unknown>).colorBgLayout).toBeUndefined();
+    });
+  });
+
   describe('validation (dev warnings)', () => {
+    test('primaire illisible en avant-plan (light) déclenche un warning de contraste', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      // #dddddd : contraste ~1.36 sur blanc → échoue en light.
+      createVisualIdentity({ name: 'low-contrast', primary: '#dddddd' });
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('contraste WCAG'));
+      warn.mockRestore();
+    });
+
+    test('primaire lisible dans les deux modes ne déclenche pas de warning de contraste', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      // #1677ff passe le seuil UI (3:1) sur blanc et sur fond sombre.
+      createVisualIdentity({ name: 'ok-contrast', primary: '#1677ff' });
+      const contrastWarn = warn.mock.calls.some((c) => String(c[0]).includes('contraste WCAG'));
+      expect(contrastWarn).toBe(false);
+      warn.mockRestore();
+    });
+
     test('colorPrimary manquant déclenche un warning', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
       const input: VisualIdentityTokens = {

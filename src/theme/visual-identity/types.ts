@@ -3,13 +3,6 @@ import type { ThemeConfig } from 'antd';
 export interface VisualIdentityColors {
   colorPrimary: string;
   colorLink?: string;
-  colorLinkHover?: string;
-  colorSuccess?: string;
-  colorWarning?: string;
-  colorError?: string;
-  colorInfo?: string;
-  colorBgLayout?: string;
-  colorTextBase?: string;
 }
 
 export interface VisualIdentityTypography {

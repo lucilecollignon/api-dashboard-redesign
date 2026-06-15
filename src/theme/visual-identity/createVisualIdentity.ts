@@ -16,13 +16,6 @@ function colorsToToken(colors: VisualIdentityColors): Record<string, unknown> {
   const token: Record<string, unknown> = {};
   if (colors.colorPrimary) token.colorPrimary = colors.colorPrimary;
   if (colors.colorLink) token.colorLink = colors.colorLink;
-  if (colors.colorLinkHover) token.colorLinkHover = colors.colorLinkHover;
-  if (colors.colorSuccess) token.colorSuccess = colors.colorSuccess;
-  if (colors.colorWarning) token.colorWarning = colors.colorWarning;
-  if (colors.colorError) token.colorError = colors.colorError;
-  if (colors.colorInfo) token.colorInfo = colors.colorInfo;
-  if (colors.colorBgLayout) token.colorBgLayout = colors.colorBgLayout;
-  if (colors.colorTextBase) token.colorTextBase = colors.colorTextBase;
   return token;
 }
 

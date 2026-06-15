@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { Partner } from "../../types";
 import { AppContext } from "./DashboardApp";
 import { Z_INDEX } from "../../utils/zIndex";
+import { useBrandForeground, WCAG_CONTRAST } from "../../theme";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -93,6 +94,10 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
   const sliderRef = useRef<Slider>(null);
 
   const { token } = useToken()
+  const brandFg = useBrandForeground()
+  // Hover de l'icône de scroll : avant-plan de marque accessible sur le fond
+  // du footer (seuil UI 3:1) — repli neutre si la primaire échoue le contraste.
+  const scrollIconHoverColor = brandFg(token.colorBgContainer, WCAG_CONTRAST.UI)
 
   // Affiche le scrollIndicator tant qu'il reste du contenu sous le viewport,
   // et tient à jour la largeur courante (nb de logos visibles + contrôles).
@@ -202,7 +207,7 @@ export const DasbhoardFooter: React.FC<DbFooterProps> = ({brands, slider=true}) 
             pointer-events: auto;
           }
           .scroll-indicator--visible .scroll-indicator__icon:hover {
-            color: ${token.colorPrimary};
+            color: ${scrollIconHoverColor};
             animation: scroll-indicator-bob 0.9s ease-in-out infinite;
           }
           @keyframes scroll-indicator-bob {

@@ -9,7 +9,7 @@ import { RouteConfig } from "../../types";
 import { AppContext } from "./DashboardApp";
 import { Icon } from "@iconify/react";
 import { Z_INDEX } from "../../utils/zIndex";
-import { ThemeToggle, useThemeContext } from "../../theme";
+import { ThemeToggle, useThemeContext, useBrandForeground, WCAG_CONTRAST } from "../../theme";
 import { useVisualIdentityLogo } from "../../theme/hooks/useVisualIdentityLogo";
 const { Text } = Typography
 
@@ -36,6 +36,12 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
   const hasLogoAlt = Boolean(effectiveAlt && effectiveAlt.trim().length > 0);
 
   const { token } = theme.useToken();
+  const brandFg = useBrandForeground();
+  // Avant-plan de marque garanti accessible (cf. useBrandForeground) :
+  // - sur le fond du conteneur, pour le focus ring (seuil UI 3:1)
+  // - sur la pastille sélectionnée (colorPrimaryBgHover), pour le texte (4.5:1)
+  const focusRingColor = brandFg(token.colorBgContainer, WCAG_CONTRAST.UI);
+  const selectedItemColor = brandFg(token.colorPrimaryBgHover, WCAG_CONTRAST.TEXT);
   const { pathname:selectedKey } = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [collapsed, setCollapsed] = useState(isMobile ? true : false);
@@ -86,9 +92,19 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
     >
       <style>
         {`
+          #dashboard-sider-nav .ant-menu-item a:hover {
+            text-decoration: none;
+          }
+          .ant-menu-submenu-popup .ant-menu-item a:hover {
+            text-decoration: none;
+          }
+          /* Empêche l'indentation des éléments de sous-menus */
+          #dashboard-sider-nav .ant-menu-sub .ant-menu-item {
+            padding-left: 24px !important;
+          }
           .dashboard-sider-home-link:focus-visible,
           .dashboard-sider-toggle:focus-visible {
-            outline: 2px solid ${token.colorPrimary};
+            outline: 2px solid ${focusRingColor};
             outline-offset: 2px;
             box-shadow: 0 0 0 3px ${token.colorBgContainer};
             border-radius: 6px;
@@ -140,9 +156,29 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
               theme={{
                 components: {
                   Menu: {
-                    itemSelectedColor: resolvedMode === "dark" ? token.colorPrimary : token.colorLinkHover,
-                    itemSelectedBg: token.colorFillSecondary,
+                    // — État repos : texte atténué → l'item actif ressort par contraste
+                    itemColor: token.colorTextSecondary,
+                    itemBg: "transparent",
+
+                    // — Hover : pastille un cran plus foncée que la boîte → visible dessus
                     itemHoverColor: token.colorText,
+                    itemHoverBg: token.colorFillSecondary,
+
+                    // — Sélectionné : avant-plan garanti accessible sur la pastille
+                    //   teintée marque. La primaire est conservée là où elle passe le
+                    //   contraste (dark), sinon repli neutre colorText (light). Voir
+                    //   useBrandForeground — remplace l'ancien hack mode-conditionnel.
+                    itemSelectedColor: selectedItemColor,
+                    itemSelectedBg: token.colorPrimaryBgHover,
+                    subMenuItemSelectedColor: selectedItemColor,
+
+                    // — Boîte du sous-menu : gris clair (délimite le groupe sans dominer)
+                    subMenuItemBg: token.colorFillTertiary,
+
+                    // — Rythme & forme
+                    itemBorderRadius: token.borderRadiusLG,
+                    itemMarginInline: 8,
+                    itemHeight: 40,
                   },
                 },
               }}

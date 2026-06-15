@@ -9,6 +9,9 @@ export type { ThemeName, ThemeMode, ThemeContextValue } from './context';
 export { usePreferredColorScheme } from './hooks/usePreferredColorScheme';
 export { useThemeMode } from './hooks/useThemeMode';
 export { useVisualIdentityLogo } from './hooks/useVisualIdentityLogo';
+export { useBrandForeground } from './hooks/useBrandForeground';
+
+export { contrastRatio, pickAccessibleForeground, WCAG_CONTRAST } from './utils/contrast';
 
 export { geo2franceLightTheme } from './themes/geo2france.light';
 export { geo2franceDarkTheme } from './themes/geo2france.dark';
