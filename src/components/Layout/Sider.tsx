@@ -167,18 +167,19 @@ const DashboardSider: React.FC<DbSiderProps> = ({style, logo, route_config, powe
                     // — Sélectionné : avant-plan garanti accessible sur la pastille
                     //   teintée marque. La primaire est conservée là où elle passe le
                     //   contraste (dark), sinon repli neutre colorText (light). Voir
-                    //   useBrandForeground — remplace l'ancien hack mode-conditionnel.
+                    //   useBrandForeground.
                     itemSelectedColor: selectedItemColor,
                     itemSelectedBg: token.colorPrimaryBgHover,
                     subMenuItemSelectedColor: selectedItemColor,
 
-                    // — Boîte du sous-menu : gris clair (délimite le groupe sans dominer)
+                    // — Boîte du sous-menu : gris clair
                     subMenuItemBg: token.colorFillTertiary,
 
                     // — Rythme & forme
                     itemBorderRadius: token.borderRadiusLG,
                     itemMarginInline: 8,
                     itemHeight: 40,
+                    activeBarBorderWidth: 0,
                   },
                 },
               }}
