@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ThemeProvider } from '../ThemeProvider';
 import { useThemeContext } from '../context';
-import { geo2franceLightTheme } from '../themes/geo2france.light';
 
 // ── Mock window.matchMedia (jsdom ne le fournit pas) ──────────────────────────
 
@@ -185,52 +184,10 @@ describe('ThemeProvider — mode verrouillé (isModeLocked)', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 5.1.3 — Couche de rétrocompatibilité (ThemeConfig direct)
+// 5.1.3 — Robustesse des entrées `theme`
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe('ThemeProvider — couche de rétrocompatibilité (ThemeConfig direct)', () => {
-  test('passer un ThemeConfig déclenche un console.warn avec "[api-dashboard]"', () => {
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const legacyTheme = { token: { colorPrimary: '#ff0000' } };
-
-    render(
-      <ThemeProvider theme={legacyTheme}>
-        <ThemeConsumer />
-      </ThemeProvider>,
-    );
-
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('[api-dashboard]'));
-    warn.mockRestore();
-  });
-
-  test('ThemeConfig direct : le composant se rend sans crash', () => {
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const legacyTheme = { token: { colorPrimary: '#ff0000' } };
-
-    render(
-      <ThemeProvider theme={legacyTheme}>
-        <span data-testid="child">ok</span>
-      </ThemeProvider>,
-    );
-
-    expect(screen.getByTestId('child')).toBeInTheDocument();
-    warn.mockRestore();
-  });
-
-  test('ThemeConfig avec algorithm est reconnu comme ThemeConfig', () => {
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    const legacyTheme = { ...geo2franceLightTheme };
-
-    render(
-      <ThemeProvider theme={legacyTheme}>
-        <ThemeConsumer />
-      </ThemeProvider>,
-    );
-
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('[api-dashboard]'));
-    warn.mockRestore();
-  });
-
+describe('ThemeProvider — robustesse des entrées theme', () => {
   test('valeur invalide (null / undefined) → fallback sur geo2france sans crash', () => {
     render(
       // @ts-expect-error test volontaire d'une valeur invalide

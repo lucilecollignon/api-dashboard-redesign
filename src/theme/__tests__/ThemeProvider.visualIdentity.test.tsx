@@ -82,20 +82,17 @@ describe('ThemeProvider - prop visualIdentity', () => {
     expect(screen.getByTestId('themeName')).toHaveTextContent('neutral');
   });
 
-  test('visualIdentity + theme (ThemeConfig brut) -> console.error + visualIdentity utilisé', () => {
-    const error = jest.spyOn(console, 'error').mockImplementation(() => {});
+  test('visualIdentity est prioritaire sur un preset theme', () => {
     const visualIdentity: VisualIdentityShorthand = { name: 'priority', primary: '#111' };
-    const legacyTheme = { token: { colorPrimary: '#222' } };
 
     render(
-      <ThemeProvider visualIdentity={visualIdentity} theme={legacyTheme}>
+      <ThemeProvider visualIdentity={visualIdentity} theme="geo2france">
         <ThemeConsumer />
       </ThemeProvider>,
     );
 
-    expect(error).toHaveBeenCalledWith(expect.stringContaining('mutuellement exclusives'));
+    // visualIdentity gagne : le themeName résolu est 'neutral', pas le preset fourni.
     expect(screen.getByTestId('themeName')).toHaveTextContent('neutral');
-    error.mockRestore();
   });
 
   test('mode dark avec visualIdentity affiche resolvedMode dark', () => {
