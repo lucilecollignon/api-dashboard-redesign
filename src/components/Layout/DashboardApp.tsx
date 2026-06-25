@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Layout } from "antd";
 const { Content } = Layout;
-import type { ThemeConfig } from "antd";
 import { HashRouter, Outlet, Route, Routes } from "react-router-dom";
 import { Partner, RouteConfig } from "../../types";
 import DashboardSider from "./Sider";
@@ -20,29 +19,6 @@ import type { ThemeName, ThemeMode } from "../../theme";
 import type { VisualIdentityThemeBundle, VisualIdentityTokens, VisualIdentityShorthand } from "../../theme/visual-identity/types";
 
 const queryClient = new QueryClient()
-
-/**
- * @deprecated Utiliser `theme="geo2france"` sur `<DashboardApp>` à la place.
- * Alias vers `geo2franceLightTheme` conservé pour la rétrocompatibilité.
- */
-export const default_theme: ThemeConfig = {
-    token: {
-      colorPrimary: "#95c11f",
-      linkHoverDecoration: 'underline',
-      colorLink: '#0f4496',
-      colorLinkHover: '#0D2449',
-      borderRadius: 4,
-      fontFamily: 'Inter',
-    },
-    components: {
-      Timeline: {
-        itemPaddingBottom: 40,
-      },
-      Form: {
-        labelColor: 'rgba(0,0,0,0.7)',
-      },
-    },
-  }
 
 
 interface AppContextProps {
@@ -86,12 +62,11 @@ export interface DashboardConfig {
   routes?: RouteConfig[];
 
   /**
-   * Preset de thème (`'geo2france'` ou `'neutral'`), ou un `ThemeConfig` brut (déprécié).
-   * Voir : https://ant.design/docs/react/customize-theme#theme
+   * Preset de thème (`'geo2france'` ou `'neutral'`).
    *
    * @default 'geo2france'
   */
-  theme?: ThemeName | ThemeConfig;
+  theme?: ThemeName;
 
   /**
    * Identité visuelle personnalisée. Accepte un `VisualIdentityThemeBundle`, `VisualIdentityTokens` ou `VisualIdentityShorthand`.
