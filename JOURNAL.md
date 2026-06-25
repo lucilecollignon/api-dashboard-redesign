@@ -3,7 +3,7 @@
 Projet : refonte du système de thème de `@geo2france/api-dashboard`  
 Fork : `lucilecollignon/api-dashboard-redesign`  
 Upstream : `geo2france/api-dashboard`  
-Objectif final : PR upstream + publication `@lucilecollignon/api-dashboard@2.0.0`
+Objectif final : améliorer le fork `lucilecollignon/api-dashboard-redesign` (pas de PR upstream ni de publication npm)
 
 ---
 
@@ -253,6 +253,39 @@ autoritaire face à un `localStorage` contradictoire, respect du choix `localSto
 
 ---
 
+## Phase 7 — Nettoyage des béquilles de rétrocompatibilité (feuille blanche)
+**Branche :** `chore/remove-backward-compat-shims`
+**Commits :** `83e28a5`, `88323ac`, `603a177`, `a6f84fa`
+**Date :** 25 juin 2026
+
+### Contexte
+
+Le client confirme que `@geo2france/api-dashboard` est très peu déployé et que l'objectif
+se limite désormais à **améliorer le fork** (plus de PR upstream ni de publication npm). Les
+4 couches de rétrocompatibilité ajoutées par prudence n'ont donc plus de consommateur à
+ménager : devenues du code mort, elles sont supprimées.
+
+### Changements
+
+| Béquille supprimée | Fichier | Remplacement |
+|--------------------|---------|--------------|
+| Chemin `theme={ThemeConfig}` brut + `console.warn` + garde-fou de mutuelle-exclusion | `theme/ThemeProvider.tsx` | `theme: ThemeName` + `visualIdentity` |
+| Alias exporté `default_theme` | `components/Layout/DashboardApp.tsx` | `theme="geo2france"` |
+| Constante figée `cardStyles` | `utils/cardStyles.tsx` + `index.ts` | hook `useCardStyles()` |
+| Tests des cas legacy | `theme/__tests__/ThemeProvider.test.tsx`, `…visualIdentity.test.tsx` | test de robustesse + test de priorité visualIdentity |
+
+### Décision de comportement assumée
+
+Passer à la fois `visualIdentity` et `theme` ne déclenche plus d'avertissement : `visualIdentity`
+gagne silencieusement (impossible de distinguer un `theme` explicite du défaut `'geo2france'`,
+et la priorité est déjà documentée).
+
+### Vérification
+
+`tsc --noEmit` OK ; suite thème **67/67 ✅**, 5 snapshots inchangés.
+
+---
+
 ## État des phases
 
 | Phase | Statut | Commit | Branche |
@@ -264,7 +297,7 @@ autoritaire face à un `localStorage` contradictoire, respect du choix `localSto
 | 4 — Corrections UI/UX | ✅ terminée | `d57cbd7` | `fix/uiux-zindex-visual-consistency` |
 | 5 — Tests (unit + snapshot + Chromatic + a11y) | ✅ terminée | `72c2670` | `test/theme-system-coverage` |
 | 6 — Documentation (Theming.mdx + DarkMode.mdx) | ✅ terminée | `edb094d` | `docs/theming-guide` |
-| 7 — Release v2 + PR upstream | ⏳ à faire | — | `chore/release-v2` |
+| 7 — Nettoyage des béquilles de rétrocompat | ✅ terminée | `a6f84fa` | `chore/remove-backward-compat-shims` |
 
 ---
 
@@ -275,4 +308,4 @@ autoritaire face à un `localStorage` contradictoire, respect du choix `localSto
 - **Composant `<App>` antd** : non ajouté (pas de static methods dans le code actuel)
 - **`locale` ConfigProvider** : non configuré (les consommateurs gèrent leur propre locale)
 - **`baseTokens` sans couleurs** : règle critique antd v6 pour que `darkAlgorithm` fonctionne
-- **Exports** : scope privé `@lucilecollignon/api-dashboard` en attendant la merge upstream
+- **Exports** : le travail s'arrête à l'amélioration du fork `lucilecollignon/api-dashboard-redesign` (ni PR upstream, ni publication npm)

@@ -14,14 +14,16 @@
 - **Intégration automatique du logo** dans `DashboardSider` via `useVisualIdentityLogo()` (avec fallback sur la prop `logo` existante)
 - Types exportés : `VisualIdentityColors`, `VisualIdentityTypography`, `VisualIdentityLogo`, `VisualIdentityTokens`, `VisualIdentityShorthand`, `VisualIdentityThemeBundle`
 
-### Deprecated
+### Removed
 
-- **`theme={ThemeConfig}`** (objet Ant Design brut) — continue de fonctionner avec un warning enrichi pointant vers `createVisualIdentity()`. Sera retiré en v4.
+- **`theme={ThemeConfig}`** (objet Ant Design brut sur `<ThemeProvider>` / `<DashboardApp>`) — supprimé. La prop `theme` n'accepte plus qu'un preset (`'geo2france'` | `'neutral'`). Utiliser `visualIdentity` pour toute personnalisation.
+- **`default_theme`** (alias exporté vers le thème geo2france) — supprimé. Utiliser `theme="geo2france"`.
+- **`cardStyles`** (constante de styles figés) — supprimée. Utiliser le hook `useCardStyles()` (dérivé des tokens du thème actif).
 
 ### Migration (3 niveaux)
 
 ```tsx
-// AVANT (toujours supporté en v3, warning console)
+// AVANT (n'est plus supporté — la prop theme n'accepte plus de ThemeConfig brut)
 <DashboardApp theme={{ token: { colorPrimary: '#FF6B35' } }} logo="/logo.svg" />
 
 // APRÈS — Niveau 1 : forme courte (recommandé pour démarrer)
