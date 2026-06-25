@@ -10,7 +10,6 @@ import { geo2franceLightTheme } from './themes/geo2france.light';
 import { geo2franceDarkTheme } from './themes/geo2france.dark';
 import { neutralLightTheme } from './themes/neutral.light';
 import { neutralDarkTheme } from './themes/neutral.dark';
-import { deepMerge } from './utils/deepMerge';
 import { createVisualIdentity } from './visual-identity/createVisualIdentity';
 import { isBundle } from './visual-identity/normalize';
 import type {
@@ -31,22 +30,13 @@ const PRESETS: Record<ThemeName, Record<'light' | 'dark', ThemeConfig>> = {
   },
 };
 
-function isThemeConfig(value: unknown): value is ThemeConfig {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    ('token' in value || 'components' in value || 'algorithm' in value)
-  );
-}
-
 export interface ThemeProviderProps {
   /**
-   * Preset de thème (`'geo2france'` ou `'neutral'`), ou un `ThemeConfig` brut
-   * pour la rétrocompatibilité (déprécié — affiche un warning console).
+   * Preset de thème (`'geo2france'` ou `'neutral'`).
    *
    * @default 'geo2france'
    */
-  theme?: ThemeName | ThemeConfig;
+  theme?: ThemeName;
 
   /**
    * Identité visuelle personnalisée. Trois formes acceptées :
@@ -76,7 +66,6 @@ export interface ThemeProviderProps {
  * - sélection du preset (geo2france / neutral)
  * - résolution du mode (auto / light / dark)
  * - support de l'identité visuelle personnalisée via `visualIdentity`
- * - couche de rétrocompatibilité pour les anciens `ThemeConfig` directs
  * - exposition du contexte `ThemeContext` aux composants enfants
  */
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
@@ -108,29 +97,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   if (visualIdentity && visualIdentityBundle) {
     // visualIdentity a priorité sur theme
-    if (theme && isThemeConfig(theme)) {
-      console.error(
-        '[api-dashboard] Les props `visualIdentity` et `theme` (ThemeConfig) sont mutuellement exclusives. ' +
-          '`visualIdentity` est utilisé en priorité. Retirez la prop `theme`.',
-      );
-    }
     resolvedThemeName = 'neutral';
     antdTheme = visualIdentityBundle[modeKey];
     logo = visualIdentityBundle.logo;
-  } else if (typeof theme === 'string' && (theme === 'geo2france' || theme === 'neutral')) {
+  } else if (theme === 'geo2france' || theme === 'neutral') {
     resolvedThemeName = theme;
     antdTheme = PRESETS[resolvedThemeName][modeKey];
-  } else if (isThemeConfig(theme)) {
-    console.warn(
-      '[api-dashboard] Passer un ThemeConfig directement à <ThemeProvider theme={...}> est déprécié et sera retiré en v4. ' +
-        'Migration : utilisez `visualIdentity={{ name: "myVisualIdentity", primary: "#xxx" }}` pour le cas simple, ' +
-        'ou `createVisualIdentity({ name, light: {...} })` pour un contrôle complet. ' +
-        'En attendant, votre configuration est mergée avec le thème geo2france.',
-    );
-    antdTheme = deepMerge(
-      PRESETS.geo2france[modeKey] as Record<string, unknown>,
-      theme as Record<string, unknown>,
-    ) as ThemeConfig;
   } else {
     antdTheme = PRESETS.geo2france[modeKey];
   }
